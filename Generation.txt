@@ -1,0 +1,1498 @@
+wait()
+
+local function comma_value(amount)
+  local formatted = amount
+local k
+  while true do  
+    formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1,%2')
+    if (k==0) then
+      break
+    end
+  end
+  return formatted
+end
+
+-- Conversion function (String encryption)
+local ds = game:GetService("DataStoreService"):GetDataStore("PlayerData3")
+
+local function convert( chars, dist, inv )
+return string.char((string.byte(chars) - 32 + (inv and -dist or dist)) % 95 + 32)
+end
+
+local function crypt(str,k,inv)
+local enc= "";
+for i=1,#str do
+if(#str-k[5] >= i or not inv)then	
+for inc=0,3 do
+if(i%4 == inc)then
+enc = enc .. convert(string.sub(str,i,i),k[inc+1],inv);
+break;
+end
+end
+end
+end
+if(not inv)then
+for i=1,k[5] do
+enc = enc .. string.char(math.random(32,126));
+end
+end
+return enc;
+end
+
+function script.MaterialCheck.OnServerInvoke(player, material, color)
+	-- Saving via. UpdateAsync.
+if player.Backpack:FindFirstChild("Place") then
+	player.Backpack.Place.Handle.Material = material
+	player.Backpack.Place.Handle.BrickColor = color
+elseif workspace[player.Name]:FindFirstChild("Place") then
+	workspace[player.Name].Place.Handle.Material = material
+	workspace[player.Name].Place.Handle.BrickColor = color
+end
+end
+
+function script.VoteKick.OnServerInvoke(player, type, user)
+	
+	if type == 1 and workspace.TimeoutV.Value == 0 then
+		if game.Players:FindFirstChild(user) then
+			local p = game.Players:GetChildren()
+			if #p > 3 then
+				local num = #p
+				local def = #p-1
+				if num == 7 then def = 5
+				elseif num == 8 then def = 6
+				elseif num == 9 then def = 7
+				elseif num == 10 then def = 7
+				elseif num == 11 then def = 8
+				elseif num == 12 then def = 8
+				elseif num == 13 then def = 9
+				elseif num == 14 then def = 10
+				elseif num == 15 then def = 11
+				elseif num == 16 then def = 11
+				elseif num == 17 then def = 12
+				elseif num == 18 then def = 12
+				elseif num == 19 then def = 13
+				elseif num > 80 then def = 45
+				elseif num > 70 then def = 40
+				elseif num > 60 then def = 35
+				elseif num > 50 then def = 30
+				elseif num > 40 then def = 25
+				elseif num > 30 then def = 20
+				elseif num > 20 then def = 15
+				end
+				_G.sysMsg(player.Name.." has started a votekick against "..user..".", "New Yeller")
+				workspace.VoteK:FindFirstChild(user).Y.Value = 0
+				workspace.VoteK:FindFirstChild(user).N.Value = 0
+				workspace.KickN.Value = tostring(user)
+				workspace.TimeoutV.Value = 600
+				wait(20)
+				local vKick = false
+				local UserN = workspace.VoteK:FindFirstChild(user) or nil
+				if UserN then
+				if workspace.VoteK:FindFirstChild(user).Y.Value >= def then vKick = true end
+				if vKick then
+						if game.Players:FindFirstChild(workspace.KickN.Value) then
+							game.Players:FindFirstChild(workspace.KickN.Value):Kick()
+							wait()
+							table.insert(_G.Kicked,user)
+							_G.sysMsg(tostring(UserN).." was kicked from the server by player majority. ["..workspace.VoteK:FindFirstChild(user).Y.Value.."/"..def.."]", "New Yeller")
+							workspace.KickN.Value = ""
+							workspace.TimeoutV.Value = 600
+						end
+				else
+					_G.sysMsg("Not enough votes were cast against "..tostring(UserN)..", votekick has ended. ["..workspace.VoteK:FindFirstChild(user).Y.Value.."/"..def.."]", "New Yeller")
+					workspace.KickN.Value = ""
+					workspace.TimeoutV.Value = 300					
+				end
+			else
+				end
+			workspace.KickN.Value = ""
+			print("[GS] Not enough players/Timeout delay.")
+		end
+		end
+	elseif type == 2 then
+		if workspace.VoteK:FindFirstChild(user) then
+		workspace.VoteK:FindFirstChild(user).Y.Value = workspace.VoteK:FindFirstChild(user).Y.Value + 1
+		print("[GS] "..player.Name.." said YES to kick "..user)
+		end
+	elseif type == 3 then
+		if workspace.VoteK:FindFirstChild(user) then
+		workspace.VoteK:FindFirstChild(user).N.Value = workspace.VoteK:FindFirstChild(user).N.Value + 1
+		print("[GS] "..player.Name.." said NO to kick "..user)
+		end
+	end
+end
+
+function script.RemoteSave.OnServerInvoke(player, getId, byte)
+	-- Saving via. UpdateAsync.
+	ds:UpdateAsync(getId..":stat", function(oldValue)
+		local newValue = oldValue or nil
+		newValue = byte
+		return newValue
+	end)
+	print("[SS] "..getId.." Remote Data Store Save Complete.")
+end
+
+function script.RemoteLoad.OnServerInvoke(player, getId)
+	-- Load Data save.
+	print("[SS] "..getId.." Remote GetAsync.")
+	local getStat = ds:GetAsync(tostring(getId)..":stat") or nil
+	-- Data Was Found For User.
+	if getStat ~= nil then print("[SS] "..getId.." Remote Data Store Data Found.")
+		return getStat
+	else
+		return false
+	end
+end
+
+function script.TimeCheck.OnServerInvoke(player, type)
+local enc1 = {29, 58, 93, 28, 27};		
+local oldNum = 0
+repeat wait() until player:FindFirstChild("cryptstats")
+local oldTime = (crypt(tostring(player:FindFirstChild("cryptstats")["En_Time"].Value),enc1,true))
+local newEnc = (crypt(tostring(oldNum + 1),enc1))
+local newTime = (crypt(tostring(oldTime + 1),enc1))
+player:FindFirstChild("cryptstats")["En_Time"].Value = newTime
+end
+
+
+function script.PlayerKicked.OnServerInvoke(player, type)
+if type == 1 then
+_G.sysMsg(player.Name.." was kicked for exploiting (Speed Hacking).", "Hot pink")
+	local hx = game:GetService("DataStoreService"):GetOrderedDataStore("BaseHax")
+	hx:IncrementAsync(player.Name, 1)
+	if game.Players:FindFirstChild(player.Name) then
+		player:Kick()
+	end
+elseif type == 2 then
+_G.sysMsg(player.Name.." was kicked for exploiting (PlayerGui Hacking).", "Hot pink")
+	local hx = game:GetService("DataStoreService"):GetOrderedDataStore("BaseHax")
+	hx:IncrementAsync(player.Name, 1)
+	if game.Players:FindFirstChild(player.Name) then
+		player:Kick()
+	end
+elseif type == 3 then
+_G.sysMsg(player.Name.." was kicked for exploiting (Stigma DLL).", "Hot pink")
+	local hx = game:GetService("DataStoreService"):GetOrderedDataStore("BaseHax")
+	hx:IncrementAsync(player.Name, 1)
+	if game.Players:FindFirstChild(player.Name) then
+		player:Kick()
+end
+end
+end
+	
+function script.ApproveUser.OnServerInvoke(player, type, user)
+	if type == 0 then
+		local p = player:FindFirstChild("Update")
+		if p ~= nil then
+			p.Value = true
+		end
+	elseif type == 1 then -- GUI access
+	local assetGet = ""
+	local adminTable = {}
+    local s, curId = pcall(function() return game:GetService("MarketplaceService"):GetProductInfo(163496492) end)
+    if s and curId then -- This id exists.
+ 		assetGet = curId.Description
+    end
+	for a in string.gmatch(assetGet, "[^,]+") do
+		adminTable[a:lower()] = true
+	end
+	if player == nil or player.userId == nil then return end
+	if (adminTable[tostring(player.userId)]) then return true end
+	return false
+	
+	elseif type == 2 then
+		if game:GetService("GamePassService"):PlayerHasPass(player, 11517) then
+--if player:IsInGroup(1123640) then
+			return true
+			else return false
+		end
+	elseif type == 3 then
+	local assetGet = ""
+	local userTable = {}
+    local s, curId = pcall(function() return game:GetService("MarketplaceService"):GetProductInfo(163496492) end)
+    if s and curId then -- This id exists.
+ 		assetGet = curId.Description
+    end
+	for a in string.gmatch(assetGet, "[^,]+") do
+		userTable[a:lower()] = true
+	end
+	if game.Players:FindFirstChild(user) then
+	if user == nil or game.Players:FindFirstChild(user).userId == nil then return end
+	if (userTable[tostring(game.Players:FindFirstChild(user).userId)]) then return true end
+	return false
+	else return false end
+	elseif type == 4 then
+	local assetGet = ""
+	local adminTable = {}
+    local s, curId = pcall(function() return game:GetService("MarketplaceService"):GetProductInfo(158389609) end)
+    if s and curId then -- This id exists.
+ 		assetGet = curId.Description
+    end
+	for a in string.gmatch(assetGet, "[^,]+") do
+		adminTable[a:lower()] = true
+	end
+	if player == nil or player.userId == nil then return end
+	if (adminTable[tostring(player.userId)]) then return true end
+	return false
+	elseif type == 5 then
+		if game:GetService("GamePassService"):PlayerHasPass(player, 11519) then
+			return true
+			else return false
+		end		
+	end
+end
+
+function script.TeleRemove.OnServerInvoke(player,target)
+if workspace.BlockField:FindFirstChild(player.Name) then
+	workspace.BlockField[player.Name]:Destroy()
+	if target:FindFirstChild("Teled") then
+	target:FindFirstChild("Teled"):Destroy()
+	end
+return false
+else
+return true
+end
+end
+
+function script.Override.OnServerInvoke(player, active)
+if active then	
+game.Players[player.Name]:FindFirstChild("Override").Value = true
+		local v=Instance.new("Color3Value")
+		local def = BrickColor.new("Toothpaste")
+		game:GetService("Debris"):AddItem(v, 2)
+		v.Name = "Override: "..player.Name
+		v.Value = def.Color
+		v.Parent=workspace.ChatRecorder
+		print("[GS] Player fell into void "..player.Name)
+else
+game.Players[player.Name]:FindFirstChild("Override").Value = false	
+end
+end
+
+function script.Inventory.OnServerInvoke(player)
+if game:GetService("GamePassService"):PlayerHasPass(player, 11521) then
+return true
+else
+return false
+end
+end
+
+function script.Speed.OnServerInvoke(player)
+local enc1 = {29, 58, 93, 28, 27};
+local inv = player:WaitForChild("cryptstats")
+local decrypt = tonumber((crypt(tostring(inv["En_Sprint"].Value),enc1,true))) or 0	
+local speed = 15 + (decrypt/2)
+return speed
+end
+
+function script.SendError.OnServerInvoke(player, message, trace)
+_G.errMsg(player.Name,message,trace,"Toothpaste")
+print("[GS] "..player.Name.. " | "..message.." | "..trace) 
+repeat wait() until workspace:FindFirstChild(player.Name)
+local pick = workspace:FindFirstChild(player.Name):FindFirstChild("Pickaxe")
+if pick then
+	local new = workspace:FindFirstChild(player.Name):FindFirstChild("Pickaxe"):Clone()
+	workspace:FindFirstChild(player.Name):FindFirstChild("Pickaxe"):Destroy()
+	new.Parent = workspace:FindFirstChild(player.Name)
+	player.Backpack:FindFirstChild("ReAnimate").Value = true
+	print("[GS] Reanimated workspace Pickaxe for "..player.Name)
+else
+	local new = player.Backpack:FindFirstChild("Pickaxe"):Clone()
+	player.Backpack:FindFirstChild("Pickaxe"):Destroy()
+	new.Parent = player.Backpack
+	player.Backpack:FindFirstChild("ReAnimate").Value = true
+	print("[GS] Reanimated Backpack Pickaxe for "..player.Name)
+end
+end
+
+function script.EditValue.OnServerInvoke(player, type, str, str2)
+local data = game:GetService("DataStoreService"):GetOrderedDataStore(type)
+data:SetAsync(str2, tonumber(str))
+end
+
+function script.OreValue.OnServerInvoke(player,encrypt,ore,gName)
+game.Players:findFirstChild(tostring(gName)).cryptstats:FindFirstChild("En_"..ore).Value = tostring((encrypt));
+end
+
+function script.AnimateFix.OnServerInvoke(player)
+repeat wait() until workspace:FindFirstChild(player.Name)
+local pick = player.Backpack:FindFirstChild("Pickaxe")
+if pick then
+	local new = player.Backpack:FindFirstChild("Pickaxe")
+	repeat wait() until new:FindFirstChild("Handle")
+	if (game:GetService("GamePassService"):PlayerHasPass(player, 11523)) then
+	repeat wait() until new.Handle:FindFirstChild("Mesh")
+	new:FindFirstChild("Handle").Mesh.TextureId = "http://www.roblox.com/asset/?id=26668916"
+	else
+	repeat wait() until new.Handle:FindFirstChild("Mesh")
+	new:FindFirstChild("Handle").Mesh.TextureId = "http://www.roblox.com/asset/?id=22147026"	
+	end
+	if player.Name == "Demonization" then
+	repeat wait() until new.Handle:FindFirstChild("Mesh")
+	new:FindFirstChild("Handle").Mesh.TextureId = "http://www.roblox.com/asset/?id=176722044"
+	new:FindFirstChild("Handle").PickEffect.Enabled = true
+	end
+	player.Backpack:FindFirstChild("ReAnimate").Value = true
+	print("[GS] Reanimated Pickaxe for "..player.Name)
+end
+end
+
+function script.GetPoints.OnServerInvoke(player)
+local pointsToAward = 0
+pcall (function()
+local PointsService = game:GetService("PointsService")
+pointsToAward = PointsService:GetAwardablePoints()
+end)
+return pointsToAward
+end
+
+function script.GetScore.OnServerInvoke(player, type, str)
+local pointsToAward = 0
+pcall (function()
+local data = game:GetService("DataStoreService"):GetOrderedDataStore(type)
+pointsToAward = data:GetAsync(str)
+end)
+return pointsToAward
+end
+
+function script.Telepad.OnServerInvoke(player, target)
+		if target then
+		if not target:FindFirstChild("Owner") then
+		local newPad = game.ServerStorage.Telepad:Clone()
+		newPad.Parent = workspace.BlockField
+		newPad.Name = player.Name
+		newPad.CanCollide = true
+		newPad.Anchored = true
+		newPad.Size = Vector3.new(4,0.4,4)
+		newPad.CFrame = CFrame.new(target.CFrame.x,target.CFrame.y + 4,target.CFrame.z)
+		local tLock = Instance.new("StringValue")
+		tLock.Name = "Teled"
+		tLock.Value = player.Name
+		tLock.Parent = target
+		game.Players[player.Name]:FindFirstChild("Teleport").Value = true
+		return true else return false end
+		else return false
+		end
+end
+
+function script.TopMinutes.OnServerInvoke(player)
+local enc1 = {29, 58, 93, 28, 27};
+local inv = player:WaitForChild("cryptstats")
+local mined = game:GetService("DataStoreService"):GetOrderedDataStore("TopTime")
+local decrypt = tonumber((crypt(tostring(inv["En_Time"].Value),enc1,true))) or 0
+	if decrypt < 10000000 and game.Players:FindFirstChild(player.Name) then
+	mined:SetAsync(player.userId, tonumber(decrypt))
+	end
+end
+
+function script.TopMoney.OnServerInvoke(player)
+local enc1 = {29, 58, 93, 28, 27};
+local inv = player:WaitForChild("cryptstats")
+local money = game:GetService("DataStoreService"):GetOrderedDataStore("TopMoney2")
+local decrypt = tonumber((crypt(tostring(inv["En_Money"].Value),enc1,true))) or 0
+local decrypt2 = tonumber((crypt(tostring(inv["En_Mined"].Value),enc1,true))) or 0
+local actLimit = (decrypt2 * 171072)
+local maxs = game:GetService("MarketplaceService"):GetProductInfo(158446104).Description or 10000000000
+if decrypt > tonumber(maxs) or (decrypt > actLimit) then
+	_G.sysMsg(player.Name.." was kicked for exploiting (Value Hacking).", "Hot pink")
+	local enc1 = {29, 58, 93, 28, 27};
+	local newMoney = (crypt(tostring("0"),enc1))
+	player:FindFirstChild("cryptstats")["En_Money"].Value = newMoney
+	wait()
+	player:Kick()
+	local hx = game:GetService("DataStoreService"):GetOrderedDataStore("BaseHax")
+	hx:IncrementAsync(player.Name, 1)
+elseif game.Players:FindFirstChild(player.Name) then
+money:SetAsync(player.userId, tonumber(decrypt))
+end
+local b = game:GetService("BadgeService")
+if decrypt >= 5000000 and not b:UserHasBadge(player.userId, 159695331) then
+b:AwardBadge(player.userId, 159695331)
+end
+if decrypt >= 1000000 and not b:UserHasBadge(player.userId, 159694860) then
+b:AwardBadge(player.userId, 159694860)
+end
+if decrypt >= 500000 and not b:UserHasBadge(player.userId, 159694745) then
+b:AwardBadge(player.userId, 159694745)
+end
+if decrypt >= 100000 and not b:UserHasBadge(player.userId, 159694576) then
+b:AwardBadge(player.userId, 159694576)
+end
+if decrypt >= 50000 and not b:UserHasBadge(player.userId, 159694473) then
+b:AwardBadge(player.userId, 159694473)
+end
+if decrypt >= 10000 and not b:UserHasBadge(player.userId, 157634363) then
+b:AwardBadge(player.userId, 157634363)
+end
+if decrypt >= 1000 and not b:UserHasBadge(player.userId, 157634296) then
+b:AwardBadge(player.userId, 157634296)
+end
+if decrypt >= 100 and not b:UserHasBadge(player.userId, 157634240) then
+b:AwardBadge(player.userId, 157634240)
+end
+end
+
+function script.TopMined.OnServerInvoke(player)
+local enc1 = {29, 58, 93, 28, 27};
+local inv = player:WaitForChild("cryptstats")
+local mined = game:GetService("DataStoreService"):GetOrderedDataStore("TopMined2")
+local decrypt = tonumber((crypt(tostring(inv["En_Mined"].Value),enc1,true))) or 0
+if decrypt < 10000000 and game.Players:FindFirstChild(player.Name) then
+mined:SetAsync(player.userId, tonumber(decrypt))
+end
+local b = game:GetService("BadgeService")
+if decrypt >= 5000000 and not b:UserHasBadge(player.userId, 171382142) then
+b:AwardBadge(player.userId, 171382142)
+end
+if decrypt >= 2000000 and not b:UserHasBadge(player.userId, 171382012) then
+b:AwardBadge(player.userId, 171382012)
+end
+if decrypt >= 1000000 and not b:UserHasBadge(player.userId, 171381764) then
+b:AwardBadge(player.userId, 171381764)
+end
+if decrypt >= 500000 and not b:UserHasBadge(player.userId, 159694360) then
+b:AwardBadge(player.userId, 159694360)
+end
+if decrypt >= 200000 and not b:UserHasBadge(player.userId, 159695076) then
+b:AwardBadge(player.userId, 159695076)
+end
+if decrypt >= 100000 and not b:UserHasBadge(player.userId, 159694180) then
+b:AwardBadge(player.userId, 159694180)
+end
+if decrypt >= 50000 and not b:UserHasBadge(player.userId, 159694014) then
+b:AwardBadge(player.userId, 159694014)
+end
+if decrypt >= 25000 and not b:UserHasBadge(player.userId, 159693662) then
+b:AwardBadge(player.userId, 159693662)
+end
+if decrypt >= 10000 and not b:UserHasBadge(player.userId, 157634151) then
+b:AwardBadge(player.userId, 157634151)
+end
+if decrypt >= 1000 and not b:UserHasBadge(player.userId, 157634044) then
+b:AwardBadge(player.userId, 157634044)
+end
+if decrypt >= 100 and not b:UserHasBadge(player.userId, 157633977) then
+b:AwardBadge(player.userId, 157633977)
+end
+end
+
+function script.ToolEffect.OnServerInvoke(player)
+local enc1 = {29, 58, 93, 28, 27};
+--local str1 = plr.cryptstats["En_Money"].Value;
+local str2 = player.cryptstats["En_Sprint"].Value;
+local str3 = player.cryptstats["En_PickDis"].Value;
+local str4 = player.cryptstats["En_PickCool"].Value;
+local str5 = player.cryptstats["En_PickDirt"].Value;
+local str6 = player.cryptstats["En_PickStone"].Value;
+local str7 = player.cryptstats["En_PickOre"].Value;
+local str8 = player.cryptstats["En_Energy"].Value;
+local str9 = player.cryptstats["En_BucketOil"].Value;
+
+--enVal1 = (crypt(tostring(str1),enc1,true)) or 0
+local enVal2 = (crypt(tostring(str2),enc1,true)) or 0
+local enVal3 = (crypt(tostring(str3),enc1,true)) or 16
+local enVal4 = (crypt(tostring(str4),enc1,true)) or 2
+local enVal5 = (crypt(tostring(str5),enc1,true)) or 0.7
+local enVal6 = (crypt(tostring(str6),enc1,true)) or 0.9
+local enVal7 = (crypt(tostring(str7),enc1,true)) or 1.25
+local enVal8 = (crypt(tostring(str8),enc1,true)) or 0.9
+local enVal9 = (crypt(tostring(str9),enc1,true)) or 3
+
+--plr.leaderstats.Money.Value = enVal1
+--plr.leaderstats.Mined.Value = enVal2
+
+	if player.Backpack:FindFirstChild("Pickaxe") then
+	player.Backpack.Pickaxe.Settings.SpeedWalk.Value = enVal2
+	player.Backpack.Pickaxe.Settings.HitRange.Value = enVal3
+	player.Backpack.Pickaxe.Settings.CoolDown.Value = enVal4
+	player.Backpack.Pickaxe.Settings.HitDirt.Value = enVal5
+	player.Backpack.Pickaxe.Settings.HitStone.Value = enVal6
+	player.Backpack.Pickaxe.Settings.HitOre.Value = enVal7
+	player.Backpack.Pickaxe.Settings.HitGranite.Value = enVal8
+	player.Backpack.Pickaxe.Settings.HitObsidian.Value = enVal9
+	end
+end
+
+
+function script.SavePos.OnServerInvoke(player)
+	player:FindFirstChild("ResetPosition").Value = workspace:FindFirstChild(player.Name).Torso.CFrame
+	print("[GS] Saving position for "..player.Name)
+end
+
+function script.Closed.OnServerInvoke(player)
+	player:FindFirstChild("Area").Value = ""
+end
+
+function script.StatusFalse.OnServerInvoke(player)
+	repeat wait() player:FindFirstChild("StatReady").Value = false until player:FindFirstChild("StatReady").Value == false
+	repeat wait() player:FindFirstChild("Menu").Value = true until player:FindFirstChild("Menu").Value == true
+end
+
+function script.StatusTrue.OnServerInvoke(player)
+	print("[GS] Exited menu for "..player.Name)
+	--player:FindFirstChild("StatReady").Value = true
+	repeat wait() player:FindFirstChild("Menu").Value = false until player:FindFirstChild("Menu").Value == false
+end
+
+function script.NewGame.OnServerInvoke(player)
+	
+	local layer = game.ReplicatedStorage.Layer:Clone()
+	local defpos = workspace.Scenery.SpawnPart.CFrame
+	local nO70 = "j,S+jU|mTT=*|Wgxk<0k?ME/0/]y,c"	
+	local nO90 = "j,U<qKt:O~JL1=ou1/U98-joabfMig"
+	local nO125 = "k,NRh2o>LC[Do )|O8+#W7HWtRjBJcv"
+	
+	local n0 = "jl=C1&yoxg!Jp&,D$1]:k3$xWVbT"
+	local n1 = "k+&JAgoJNp;tBRRb5V0[BuTyfmR~"
+	local n2 = "l#efh3{(rL4h%r>j)&xqF_.W&=fo"
+	local n16 = "k44DwsaJ<^TOY4u{yU>p9=uS.(:%*"
+	local n28 = "l6lNzHUF!chL>[7ppSl9f?%<7!Grc"
+
+	local ban = Instance.new("BoolValue")
+	ban.Name = "Banned"
+	
+	local upd = Instance.new("BoolValue")
+	upd.Name = "Update"
+		
+	local gh = Instance.new("BoolValue")
+	gh.Name = "Grapple"
+	gh.Value = true
+	
+	local gc = Instance.new("BoolValue")
+	gc.Name = "Gravity"
+	gc.Value = true
+	
+	local ts = Instance.new("BoolValue")
+	ts.Name = "Restart"
+	
+	local pad = Instance.new("BoolValue")
+	pad.Name = "Teleport"
+	
+	local ani = Instance.new("BoolValue")
+	ani.Name = "Animate"
+	
+	local area = Instance.new("StringValue")
+	area.Name = "Area"
+	
+	local loaded = Instance.new("BoolValue")
+	loaded.Name = "StatReady"
+	
+	local menu = Instance.new("BoolValue")
+	menu.Name = "Menu"
+	
+	local reset = Instance.new("CFrameValue")
+	reset.Name = "ResetPosition"
+	
+	local stat = Instance.new("ObjectValue")
+	stat.Name = "leaderstats"
+	
+	local ens = Instance.new("ObjectValue")
+	ens.Name = "cryptstats"
+		
+	local cash = Instance.new("IntValue")
+	cash.Name = "Money"
+	
+	local mined = Instance.new("IntValue")
+	mined.Name = "Mined"
+	
+	local depth = Instance.new("IntValue")
+	depth.Name = "Depth"
+	
+	local emined = Instance.new("StringValue")
+	emined.Name = "En_Mined"	
+
+	local ecash = Instance.new("StringValue")
+	ecash.Name = "En_Money"
+	
+	local epickdis = Instance.new("StringValue")
+	epickdis.Name = "En_PickDis"
+	
+	local epickcool = Instance.new("StringValue")
+	epickcool.Name = "En_PickCool"
+	
+	local epickstone = Instance.new("StringValue")
+	epickstone.Name = "En_PickStone"
+	
+	local epickdirt = Instance.new("StringValue")
+	epickdirt.Name = "En_PickDirt"
+		
+	local epickwalk = Instance.new("StringValue")
+	epickwalk.Name = "En_PickWalk"
+	
+	local epickore = Instance.new("StringValue")
+	epickore.Name = "En_PickOre"
+	
+	local ebucket = Instance.new("StringValue")
+	ebucket.Name = "En_BucketOil"
+	
+	local energy = Instance.new("StringValue")
+	energy.Name = "En_Energy"
+	
+	local inv = Instance.new("StringValue")
+	inv.Name = "En_Inventory"
+
+	local tele = Instance.new("StringValue")
+	tele.Name = "En_Teleport"
+
+	local light = Instance.new("StringValue")
+	light.Name = "En_Light"
+	
+	local coilgrav = Instance.new("StringValue")
+	coilgrav.Name = "En_GravCoil"
+
+	local sprint = Instance.new("StringValue")
+	sprint.Name = "En_Sprint"
+	
+	local m0 = Instance.new("StringValue")
+	m0.Name = "En_Dynamite"
+	
+	local m1 = Instance.new("StringValue")
+	m1.Name = "En_Dirt"
+
+	local m2 = Instance.new("StringValue")
+	m2.Name = "En_Stone"
+	
+	local m3 = Instance.new("StringValue")
+	m3.Name = "En_Copper"
+	
+	local m4 = Instance.new("StringValue")
+	m4.Name = "En_Tin"
+
+	local m5 = Instance.new("StringValue")
+	m5.Name = "En_Bronze"
+	
+	local m6 = Instance.new("StringValue")
+	m6.Name = "En_Silver"
+	
+	local m7 = Instance.new("StringValue")
+	m7.Name = "En_Gold"
+	
+	local m8 = Instance.new("StringValue")
+	m8.Name = "En_Platinum"
+	
+	local m9 = Instance.new("StringValue")
+	m9.Name = "En_Sapphire"
+	
+	local m10 = Instance.new("StringValue")
+	m10.Name = "En_Ruby"
+	
+	local m11 = Instance.new("StringValue")
+	m11.Name = "En_Emerald"
+	
+	local m12 = Instance.new("StringValue")
+	m12.Name = "En_Diamond"
+
+	local m13 = Instance.new("StringValue")
+	m13.Name = "En_Uranium"
+
+	local m14 = Instance.new("StringValue")
+	m14.Name = "En_Coal"
+
+	local m15 = Instance.new("StringValue")
+	m15.Name = "En_Oil"
+	
+	local m16 = Instance.new("StringValue")
+	m16.Name = "En_Amethyst"
+
+	local m17 = Instance.new("StringValue")
+	m17.Name = "En_Adurite"
+
+	local m18 = Instance.new("StringValue")
+	m18.Name = "En_Unobtainium"
+
+	local m19 = Instance.new("StringValue")
+	m19.Name = "En_Turquoise"
+			
+	local timespent = Instance.new("StringValue")
+	timespent.Name = "En_Time"
+	
+	local find = Instance.new("ObjectValue")
+	find.Name = "Badges"
+	
+	local f1 = Instance.new("BoolValue")
+	f1.Name = "Copper"
+
+	local f2 = Instance.new("BoolValue")
+	f2.Name = "Silver"
+	
+	local f3 = Instance.new("BoolValue")
+	f3.Name = "Gold"
+	
+	local f4 = Instance.new("BoolValue")
+	f4.Name = "Sapphire"
+	
+	local f5 = Instance.new("BoolValue")
+	f5.Name = "Ruby"
+	
+	local f6 = Instance.new("BoolValue")
+	f6.Name = "Emerald"
+	
+	local f7 = Instance.new("BoolValue")
+	f7.Name = "Diamond"
+
+	local f8 = Instance.new("BoolValue")
+	f8.Name = "Uranium"
+
+	local f9 = Instance.new("BoolValue")
+	f9.Name = "Turquoise"
+		
+	local fo = Instance.new("BoolValue")
+	fo.Name = "Override"
+			
+	repeat wait() until workspace:FindFirstChild(player.Name)
+	ecash.Parent = ens
+	emined.Parent = ens
+	epickstone.Parent = ens
+	epickdis.Parent = ens
+	epickwalk.Parent = ens
+	epickcool.Parent = ens
+	epickdirt.Parent = ens
+	epickore.Parent = ens
+	ebucket.Parent = ens
+	energy.Parent = ens
+	inv.Parent = ens
+	tele.Parent = ens
+	light.Parent = ens
+	coilgrav.Parent = ens
+	sprint.Parent = ens
+	timespent.Parent = ens
+	
+	menu.Value = true
+	cash.Value = 0
+	mined.Value = 0
+	depth.Value = 0
+	emined.Value = n0
+	ecash.Value = n0
+	epickdis.Value = n16
+	epickcool.Value = n2
+	epickstone.Value = nO90
+	epickdirt.Value = nO70
+	epickwalk.Value = n0
+	epickore.Value = nO125
+	ebucket.Value = n0
+	energy.Value = n0
+	inv.Value = n28
+	tele.Value = n0
+	light.Value = n0
+	coilgrav.Value = n0
+	sprint.Value = n0
+	m0.Value = n0
+	m1.Value = n0
+	m2.Value = n0
+	m3.Value = n0
+	m4.Value = n0
+	m5.Value = n0
+	m6.Value = n0
+	m7.Value = n0
+	m8.Value = n0
+	m9.Value = n0
+	m10.Value = n0
+	m11.Value = n0
+	m12.Value = n0
+	m13.Value = n0
+	m14.Value = n0
+	m15.Value = n0
+	m16.Value = n0
+	m17.Value = n0
+	m18.Value = n0
+	m19.Value = n0
+	timespent.Value = n0
+
+	f1.Parent = find
+	f2.Parent = find
+	f3.Parent = find
+	f4.Parent = find
+	f5.Parent = find
+	f6.Parent = find
+	f7.Parent = find
+	f8.Parent = find
+	f9.Parent = find
+	
+	m0.Parent = ens
+	m1.Parent = ens
+	m2.Parent = ens
+	m3.Parent = ens
+	m4.Parent = ens
+	m5.Parent = ens
+	m6.Parent = ens
+	m7.Parent = ens
+	m8.Parent = ens
+	m9.Parent = ens
+	m10.Parent = ens
+	m11.Parent = ens
+	m12.Parent = ens
+	m13.Parent = ens
+	m14.Parent = ens
+	m15.Parent = ens
+	m16.Parent = ens
+	m17.Parent = ens
+	m18.Parent = ens
+	m19.Parent = ens
+	
+	cash.Parent = stat
+	mined.Parent = stat
+	depth.Parent = stat
+	
+	local x = player:GetChildren()
+	for i = 1, #x do
+		if x[i]:IsA("BoolValue") or x[i]:IsA("StringValue") or x[i]:IsA("ObjectValue") or x[i]:IsA("CFrameValue") or x[i]:IsA("IntValue") then
+			x[i]:Destroy()
+		end
+	end	
+	
+	ban.Parent = player
+	upd.Parent = player
+	gh.Parent = player
+	gc.Parent = player
+	layer.Parent = player
+	fo.Parent = player
+	find.Parent = player	
+	ts.Parent = player
+	pad.Parent = player	
+	area.Parent = player
+	ani.Parent = player
+	menu.Parent = player
+	reset.Parent = player
+	loaded.Parent = player
+	ens.Parent = player
+	stat.Parent = player
+	player:FindFirstChild("Area").Value = ""
+	player:FindFirstChild("Menu").Value = false
+	player:FindFirstChild("StatReady").Value = true
+	reset.Value = defpos
+end
+
+function script.SaveGame.OnServerInvoke(player)
+--[[	if player:FindFirstChild("cryptstats") and player:FindFirstChild("StatReady") and player:FindFirstChild("Menu") then
+	local score = player.cryptstats:GetChildren()
+			for i = 1,#score do if score[i].Value ~= "" then
+				player:SaveString(score[i].Name,score[i].Value)
+				end
+			end
+			print("[SS] "..player.Name.." Data Save.")
+end 	]]
+
+	-- Get Encrypted Stats.
+	if player:FindFirstChild("cryptstats") and player:FindFirstChild("StatReady") and player:FindFirstChild("Menu") then
+	local tick = time()
+	local stats = player["cryptstats"]:GetChildren()
+	local finalStat = "Encrypted Data: "
+	local byte = ""
+	
+	-- Creating String and Encoder for Data Save.]]
+	for i = 1, #stats do finalStat = (finalStat..""..stats[i].Name..": [[["..stats[i].Value.."]]] ") end
+	for i = 1, string.len(finalStat) do byte = byte..[[/]]..string.byte(string.sub(finalStat, i, i)) end
+	
+	-- Saving via. UpdateAsync.
+	ds:UpdateAsync(player.userId..":stat", function(oldValue)
+		local newValue = oldValue or nil
+		newValue = byte
+		return newValue
+	end)
+	print("[SS] "..player.Name.." Data Store Save.")
+	print("[SS] Time Save Elapse: "..tostring((time() - tick)*1000).."ms.")
+
+	end
+end
+
+function script.LoadGame.OnServerInvoke(player)
+	local enc1 = {29, 58, 93, 28, 27};
+
+	local dataStore = false
+	local w = 0
+	repeat wait() w=w+1 print("[SS] Tick ("..w..") for "..player.Name) until player.DataReady or w > 500
+	repeat wait() until player:FindFirstChild("cryptstats")
+
+	-- Ready To Get Data Save.
+	repeat wait() until player:FindFirstChild("cryptstats")
+	local getStat = ds:GetAsync(player.userId..":stat") or nil
+	-- Data Was Found For User.
+	if getStat ~= nil then
+		local loadData = ""
+		for a in string.gmatch(getStat, "%d+") do loadData = loadData .. string.char(tonumber(a)) end
+		local cntName = 0
+		local cntData = 0
+		local EnStrs = {}
+		local EnData = {}
+		for i in string.gmatch(loadData, "%sEn_%a+") do cntName = cntName + 1 table.insert(EnStrs,string.sub(i,2,string.len(i))) end
+		for j in string.gmatch(loadData, "%s[[[[].-]]]%s") do cntData = cntData + 1 table.insert(EnData,string.sub(j,5,string.len(j)-4))end
+		if cntName > 0 and cntData > 0 then
+			for i = 1, #EnStrs do
+				if player["cryptstats"]:FindFirstChild(EnStrs[i]) then
+				player["cryptstats"]:FindFirstChild(EnStrs[i]).Value = tostring(EnData[i])
+				else
+					print("[GS] Error: "..EnStrs[i].." not found, creating new instance.")
+					local newObj = Instance.new("StringValue")
+					newObj.Parent = player["cryptstats"]
+					newObj.Name = tostring(EnStrs[i])
+					newObj.Value = tostring(EnData[i])
+				end
+			end
+				player:FindFirstChild("leaderstats").Mined.Value = tonumber(crypt(player.cryptstats["En_Mined"].Value,enc1,true))
+				player:FindFirstChild("leaderstats").Money.Value = tonumber(crypt(player.cryptstats["En_Money"].Value,enc1,true))
+				player:FindFirstChild("StatReady").Value = true
+				print("[GS] Data Store Loaded For "..player.Name)
+				local v=Instance.new("Color3Value")
+				local def = BrickColor.new("New Yeller")
+				game:GetService("Debris"):AddItem(v, 2)
+				v.Name = "Load: "..player.Name
+				v.Value = def.Color
+				v.Parent=workspace.ChatRecorder 
+				return true
+		else
+			print("[GS] Data Store Load Failed [1]: "..player.Name)
+			local v=Instance.new("Color3Value")
+			local def = BrickColor.new("Really red")
+			game:GetService("Debris"):AddItem(v, 2)
+			v.Name = "Failed: "..player.Name
+			v.Value = def.Color
+			v.Parent=workspace.ChatRecorder
+			player:FindFirstChild("StatReady").Value = false
+			return false
+		end
+	else
+		print("[GS] Data Store Not Found [1]: "..player.Name)
+		return false
+		--[[if player.DataReady then
+			print("[SS] Found data for "..player.Name)
+			if player:findFirstChild("cryptstats") then
+			local score = player.cryptstats:GetChildren()
+				for i = 1,#score do
+				local ScoreLoaded = player:LoadString(score[i].Name)
+					if ScoreLoaded ~= "" then
+						score[i].Value = ScoreLoaded
+					player:FindFirstChild("StatReady").Value = true
+					player:FindFirstChild("Menu").Value = false
+					player:FindFirstChild("Area").Value = ""
+					end 	
+				end 
+				return true
+			end		
+				local v=Instance.new("Color3Value")
+				local def = BrickColor.new("Toothpaste")
+				game:GetService("Debris"):AddItem(v, 2)
+				v.Name = "Load: "..player.Name
+				v.Value = def.Color
+				v.Parent=workspace.ChatRecorder
+				return true
+		else
+				local v=Instance.new("Color3Value")
+				local def = BrickColor.new("Really red")
+				game:GetService("Debris"):AddItem(v, 2)
+				v.Name = "Failed: "..player.Name
+				v.Value = def.Color
+				v.Parent=workspace.ChatRecorder
+				player:FindFirstChild("StatReady").Value = false
+		end]]
+	end------------------------
+	return false
+end
+
+function script.Purchase.OnServerInvoke(player, currMoney, pricemoney, changedval, whatsold)
+	--local notsaves = {"GravityCoil", "SpeedCoil", "TeleportPad"}
+	local give = "Error"
+	local enc1 = {29, 58, 93, 28, 27};
+	local inv = player:WaitForChild("cryptstats")	
+ 	if whatsold == "Checkpad" then
+		give = "Checkpad"
+elseif whatsold == "Dynamite" then
+		give = "Add"
+	else
+		give = "Upgrade"
+	end
+
+	local oldVal = changedval
+	local scanmoney = 0
+	if whatsold == "PickStone" then
+		if oldVal == 0.8 then
+		scanmoney = 250
+		elseif oldVal == 0.7 then
+		scanmoney = 600
+		elseif oldVal == 0.6 then
+		scanmoney = 950
+		elseif oldVal == 0.5 then
+		scanmoney = 1500
+		elseif oldVal == 0.4 then
+		scanmoney = 2100
+		elseif oldVal == 0.3 then
+		scanmoney = 3300
+		elseif oldVal == 0.2 then
+		scanmoney = 5500
+		elseif oldVal == 0.1 then
+		scanmoney = 8000
+		elseif oldVal == 0 then
+		scanmoney = 15000
+		elseif oldVal == -0.05 then
+		scanmoney = 40000
+		end
+	elseif whatsold == "PickDirt" then
+		if oldVal == 0.6 then
+		scanmoney = 75
+		elseif oldVal == 0.5 then
+		scanmoney = 150
+		elseif oldVal == 0.4 then
+		scanmoney = 300
+		elseif oldVal == 0.3 then
+		scanmoney = 700
+		elseif oldVal == 0.2 then
+		scanmoney = 1300
+		elseif oldVal == 0.1 then
+		scanmoney = 2600
+		elseif oldVal == 0 then
+		scanmoney = 6700
+		elseif oldVal == -0.02 then
+		scanmoney = 16400
+		elseif oldVal == -0.05 then
+		scanmoney = 30000
+		end
+	elseif whatsold == "PickOre" then
+		if oldVal == 1.15 then
+		scanmoney = 150
+		elseif oldVal == 1.05 then
+		scanmoney = 250
+		elseif oldVal == 0.95 then
+		scanmoney = 400
+		elseif oldVal == 0.85 then
+		scanmoney = 600
+		elseif oldVal == 0.75 then
+		scanmoney = 850
+		elseif oldVal == 0.65 then
+		scanmoney = 1150
+		elseif oldVal == 0.55 then
+		scanmoney = 2700
+		elseif oldVal == 0.45 then
+		scanmoney = 3300
+		elseif oldVal == 0.35 then
+		scanmoney = 5850
+		elseif oldVal == 0.25 then
+		scanmoney = 7650
+		elseif oldVal == 0.15 then
+		scanmoney = 9900
+		elseif oldVal == 0.05 then
+		scanmoney = 14500
+		elseif oldVal == 0 then
+		scanmoney = 29500
+		elseif oldVal == -0.05 then
+		scanmoney = 50000
+		end
+	elseif whatsold == "PickCool" then
+		if oldVal == 1.75 then
+		scanmoney = 200
+		elseif oldVal == 1.5 then
+		scanmoney = 400
+		elseif oldVal == 1.25 then
+		scanmoney = 700
+		elseif oldVal == 1 then
+		scanmoney = 1100
+		elseif oldVal == 0.75 then
+		scanmoney = 2600
+		elseif oldVal == 0.5 then
+		scanmoney = 3200
+		elseif oldVal == 0.25 then
+		scanmoney = 5100
+		elseif oldVal == 0.15 then
+		scanmoney = 7400
+		elseif oldVal == 0.05 then
+		scanmoney = 12800
+		elseif oldVal == 0 then
+		scanmoney = 30000
+		end
+	elseif whatsold == "PickDis" then
+		if oldVal == 18 then
+		scanmoney = 75
+		elseif oldVal == 22 then
+		scanmoney = 250
+		elseif oldVal == 26 then
+		scanmoney = 450
+		elseif oldVal == 30 then
+		scanmoney = 900
+		elseif oldVal == 36 then
+		scanmoney = 1800
+		elseif oldVal == 42 then
+		scanmoney = 2750
+		elseif oldVal == 50 then
+		scanmoney = 4550
+		elseif oldVal == 64 then
+		scanmoney = 9200
+		elseif oldVal == 80 then
+		scanmoney = 14600
+		elseif oldVal == 98 then
+		scanmoney = 28900
+		elseif oldVal == 120 then
+		scanmoney = 52000
+		elseif oldVal == 140 then
+		scanmoney = 80000
+		end
+	elseif whatsold == "Sprint" then
+		if oldVal == 1 then
+		scanmoney = 300
+		elseif oldVal == 2 then
+		scanmoney = 600
+		elseif oldVal == 3 then
+		scanmoney = 1150
+		elseif oldVal == 4 then
+		scanmoney = 2300
+		elseif oldVal == 5 then
+		scanmoney = 5600
+		elseif oldVal == 6 then
+		scanmoney = 9800
+		elseif oldVal == 7 then
+		scanmoney = 13400
+		elseif oldVal == 8 then
+		scanmoney = 22500
+		elseif oldVal == 9 then
+		scanmoney = 34000
+		elseif oldVal == 10 then
+		scanmoney = 49700
+		elseif oldVal == 12 then
+		scanmoney = 110000
+		end	
+	elseif whatsold == "Energy" then
+		if oldVal == 0.9 then
+		scanmoney = 16000
+		elseif oldVal == 0.8 then
+		scanmoney = 24200
+		elseif oldVal == 0.7 then
+		scanmoney = 56500
+		elseif oldVal == 0.6 then
+		scanmoney = 89000
+		elseif oldVal == 0.5 then
+		scanmoney = 111000
+		elseif oldVal == 0.4 then
+		scanmoney = 158000
+		elseif oldVal == 0.3 then
+		scanmoney = 204000
+		elseif oldVal == 0.2 then
+		scanmoney = 265000
+		elseif oldVal == 0.1 then
+		scanmoney = 309000
+		elseif oldVal == -0.05 then
+		scanmoney = 400000
+		end
+	elseif whatsold == "BucketOil" then
+		if oldVal == 1.2 then
+		scanmoney = 125000
+		elseif oldVal == 1.1 then
+		scanmoney = 175000
+		elseif oldVal == 1.0 then
+		scanmoney = 250000
+		elseif oldVal == 0.9 then
+		scanmoney = 387500
+		elseif oldVal == 0.8 then
+		scanmoney = 550000
+		elseif oldVal == 0.7 then
+		scanmoney = 725000
+		elseif oldVal == 0.6 then
+		scanmoney = 962500
+		elseif oldVal == 0.5 then
+		scanmoney = 1450000
+		elseif oldVal == 0.4 then
+		scanmoney = 2000000
+		elseif oldVal == 0.3 then
+		scanmoney = 2825000
+		elseif oldVal == 0.2 then
+		scanmoney = 3975000
+		elseif oldVal == 0.1 then
+		scanmoney = 5250000
+		elseif oldVal == -0.05 then
+		scanmoney = 7000000
+		end
+	elseif whatsold == "Inventory" then
+		if oldVal == 42 then
+		scanmoney = 125
+		elseif oldVal == 63 then
+		scanmoney = 450
+		elseif oldVal == 95 then
+		scanmoney = 900
+		elseif oldVal == 143 then
+		scanmoney = 1900
+		elseif oldVal == 214 then
+		scanmoney = 3600
+		elseif oldVal == 321 then
+		scanmoney = 6800
+		elseif oldVal == 482 then
+		scanmoney = 9300
+		elseif oldVal == 723 then
+		scanmoney = 16500
+		elseif oldVal == 1084 then
+		scanmoney = 40700
+		elseif oldVal == 1626 then
+		scanmoney = 88500
+		elseif oldVal == 2439 then
+		scanmoney = 180000
+		elseif oldVal == 3658 then
+		scanmoney = 325000
+		elseif oldVal == 5487 then
+		scanmoney = 600000	
+		end
+	elseif whatsold == "Teleport" then
+		if oldVal == 2 then
+		scanmoney = 75
+		elseif oldVal == 4 then
+		scanmoney = 200
+		elseif oldVal == 6 then
+		scanmoney = 550
+		elseif oldVal == 8 then
+		scanmoney = 1100
+		elseif oldVal == 12 then
+		scanmoney = 2300
+		elseif oldVal == 16 then
+		scanmoney = 3400
+		elseif oldVal == 20 then
+		scanmoney = 5000
+		elseif oldVal == 24 then
+		scanmoney = 7200
+		elseif oldVal == 28 then
+		scanmoney = 9600
+		elseif oldVal == 36 then
+		scanmoney = 16000
+		elseif oldVal == 46 then
+		scanmoney = 22100
+		elseif oldVal == 60 then
+		scanmoney = 34200
+		elseif oldVal == 80 then
+		scanmoney = 49600
+		elseif oldVal == 100 then
+		scanmoney = 120000
+		elseif oldVal == 125 then
+		scanmoney = 175000
+		elseif oldVal == 160 then
+		scanmoney = 230000
+		elseif oldVal == 200 then
+		scanmoney = 310000
+		elseif oldVal == 360 then
+		scanmoney = 530000
+		elseif oldVal == 450 then
+		scanmoney = 650000
+		end	
+	elseif whatsold == "Light" then
+		if oldVal == 2 then
+		scanmoney = 250
+		elseif oldVal == 4 then
+		scanmoney = 600
+		elseif oldVal == 6 then
+		scanmoney = 1150
+		elseif oldVal == 9 then
+		scanmoney = 2600
+		elseif oldVal == 13 then
+		scanmoney = 5150
+		elseif oldVal == 16 then
+		scanmoney = 9700
+		elseif oldVal == 19 then
+		scanmoney = 18600
+		elseif oldVal == 25 then
+		scanmoney = 38900
+		elseif oldVal == 32 then
+		scanmoney = 110000
+		end
+	elseif whatsold == "Checkpad" then
+		scanmoney = 450
+	elseif whatsold == "Gravity" then
+		scanmoney = 375
+	elseif whatsold == "Grapple" then
+		scanmoney = 1125
+	elseif whatsold == "Dynamite" then
+		scanmoney = 25000
+	end
+	
+	if scanmoney ~= pricemoney then
+	_G.sysMsg(player.Name.." was kicked for possible exploiting.", "Hot pink")
+	wait()
+	print("[GS] Original: "..tostring(scanmoney).. " Modified: "..tostring(pricemoney))
+	player:Kick()
+	local hx = game:GetService("DataStoreService"):GetOrderedDataStore("BaseHax")
+	hx:IncrementAsync(player.Name, 1)
+	else
+	if give == "Upgrade" then
+	local reset = (crypt(tostring(changedval),enc1))
+	player:FindFirstChild("cryptstats")["En_"..whatsold].Value = reset
+	elseif give == "Add" then
+	local dyn = (crypt(tostring(changedval + 20),enc1))
+	player:FindFirstChild("cryptstats")["En_"..whatsold].Value = dyn
+	end
+	local newMoney = currMoney - pricemoney
+	local upmny = (crypt(tostring(newMoney),enc1))
+	player:FindFirstChild("cryptstats")["En_Money"].Value = upmny
+	end
+	
+return give
+end 
+
+function script.Sell.OnServerInvoke(player, givemoney, whatsold, numores)
+	local debounce = true
+	local enc1 = {29, 58, 93, 28, 27};
+	local unCrypt = tonumber((crypt(tostring(givemoney),enc1,true))) or 0
+	local modified = unCrypt
+	givemoney = 0
+	local possible = (givemoney/numores)
+local inv = player.cryptstats
+local d1 = tonumber((crypt(tostring(inv["En_Dirt"].Value),enc1,true))) or 0
+local d2 = tonumber((crypt(tostring(inv["En_Stone"].Value),enc1,true))) or 0
+local d3 = tonumber((crypt(tostring(inv["En_Copper"].Value),enc1,true))) or 0
+local d4 = tonumber((crypt(tostring(inv["En_Silver"].Value),enc1,true))) or 0
+local d5 = tonumber((crypt(tostring(inv["En_Gold"].Value),enc1,true))) or 0
+local d6 = tonumber((crypt(tostring(inv["En_Sapphire"].Value),enc1,true))) or 0
+local d7 = tonumber((crypt(tostring(inv["En_Ruby"].Value),enc1,true))) or 0
+local d8 = tonumber((crypt(tostring(inv["En_Emerald"].Value),enc1,true))) or 0
+local d9 = tonumber((crypt(tostring(inv["En_Diamond"].Value),enc1,true))) or 0
+local d10 = tonumber((crypt(tostring(inv["En_Uranium"].Value),enc1,true))) or 0
+local d11 = tonumber((crypt(tostring(inv["En_Amethyst"].Value),enc1,true))) or 0	
+local d12 = tonumber((crypt(tostring(inv["En_Oil"].Value),enc1,true))) or 0
+local d13 = tonumber((crypt(tostring(inv["En_Coal"].Value),enc1,true))) or 0
+local d14 = tonumber((crypt(tostring(inv["En_Platinum"].Value),enc1,true))) or 0
+local d15 = tonumber((crypt(tostring(inv["En_Tin"].Value),enc1,true))) or 0
+local d16 = tonumber((crypt(tostring(inv["En_Bronze"].Value),enc1,true))) or 0
+local d17 = tonumber((crypt(tostring(inv["En_Adurite"].Value),enc1,true))) or 0
+local d18 = tonumber((crypt(tostring(inv["En_Unobtainium"].Value),enc1,true))) or 0
+local d19 = tonumber((crypt(tostring(inv["En_Turquoise"].Value),enc1,true))) or 0
+
+local t1 = d1 * 2
+local t2 = d2 * 4
+local t3 = d3 * 12
+local t4 = d4 * 24
+local t5 = d5 * 34
+local t6 = d6 * 48
+local t7 = d7 * 66
+local t8 = d8 * 86
+local t9 = d9 * 194
+local t10 = d10 * 510
+local t11 = d11 * 2048
+local t12 = d12 * 16384
+local t13 = d13 * 12
+local t14 = d14 * 6096
+local t15 = d15 * 24
+local t16 = d16 * 171072
+local t17 = d17 * 78720
+local t18 = d18 * 661337
+local t19 = d19 * 2014
+
+if (whatsold == "Dirt") then
+givemoney = t1
+elseif (whatsold == "Stone") then
+givemoney = t2
+elseif (whatsold == "Copper") then
+givemoney = t3
+elseif (whatsold == "Silver") then
+givemoney = t4
+elseif (whatsold == "Gold") then
+givemoney = t5
+elseif (whatsold == "Sapphire") then
+givemoney = t6
+elseif (whatsold == "Ruby") then
+givemoney = t7
+elseif (whatsold == "Emerald") then
+givemoney = t8
+elseif (whatsold == "Diamond") then
+givemoney = t9
+elseif (whatsold == "Uranium") then
+givemoney = t10
+elseif (whatsold == "Amethyst") then
+givemoney = t11
+elseif (whatsold == "Oil") then
+givemoney = t12
+elseif (whatsold == "Coal") then
+givemoney = t13
+elseif (whatsold == "Platinum") then
+givemoney = t14
+elseif (whatsold == "Tin") then
+givemoney = t15
+elseif (whatsold == "Bronze") then
+givemoney = t16
+elseif (whatsold == "Adurite") then
+givemoney = t17
+elseif (whatsold == "Unobtainium") then
+givemoney = t18
+elseif (whatsold == "Turquoise") then
+givemoney = t19
+elseif (whatsold == "All") then
+givemoney = t1+t2+t3+t4+t5+t6+t7+t8+t8+t9+t10+t11+t12+t13+t14+t15+t16+t17+t18+t19
+end
+if modified ~= givemoney then
+	_G.sysMsg(player.Name.." was kicked for exploiting (Refinery Hacking).", "Hot pink")
+	wait()
+	print("[GS] Original: "..tostring(givemoney).. " Modified: "..tostring(modified))
+	local hx = game:GetService("DataStoreService"):GetOrderedDataStore("BaseHax")
+	hx:IncrementAsync(player.Name, 1)
+	if game.Players:FindFirstChild(player.Name) then
+		player:Kick()
+	end
+else
+	if givemoney > 50000 and debounce then debounce = false
+		if whatsold == "Oil" then
+		_G.sysMsg(player.Name.." sold Tektite for $"..comma_value(givemoney)..".", "New Yeller")
+		elseif whatsold == "Coal" then
+		_G.sysMsg(player.Name.." sold Granite for $"..comma_value(givemoney)..".", "New Yeller")
+		elseif whatsold == "Tin" then
+		_G.sysMsg(player.Name.." sold Obsidian for $"..comma_value(givemoney)..".", "New Yeller")	
+		elseif whatsold == "Bronze" then
+		_G.sysMsg(player.Name.." sold Fire Crystal for $"..comma_value(givemoney)..".", "New Yeller")	
+		else
+		_G.sysMsg(player.Name.." sold "..whatsold.." for $"..comma_value(givemoney)..".", "New Yeller")			
+		end
+	debounce = true
+	end
+	
+	local enc1 = {29, 58, 93, 28, 27};
+	local inv = player:WaitForChild("cryptstats")
+	local oldMoney = tonumber((crypt(tostring(inv["En_Money"].Value),enc1,true))) or 0
+	local newMoney = (crypt(tostring(givemoney + oldMoney),enc1))
+	local reset = (crypt("0",enc1))
+	player:FindFirstChild("cryptstats")["En_Money"].Value = newMoney
+	if whatsold ~= "All" and whatsold ~= "None" then
+	player:FindFirstChild("cryptstats")["En_"..whatsold].Value = reset
+	elseif whatsold == "All" then
+	player:FindFirstChild("cryptstats")["En_Dirt"].Value = reset
+	player:FindFirstChild("cryptstats")["En_Stone"].Value = reset
+	player:FindFirstChild("cryptstats")["En_Copper"].Value = reset
+	player:FindFirstChild("cryptstats")["En_Silver"].Value = reset
+	player:FindFirstChild("cryptstats")["En_Gold"].Value = reset
+	player:FindFirstChild("cryptstats")["En_Sapphire"].Value = reset
+	player:FindFirstChild("cryptstats")["En_Ruby"].Value = reset
+	player:FindFirstChild("cryptstats")["En_Emerald"].Value = reset
+	player:FindFirstChild("cryptstats")["En_Diamond"].Value = reset
+	player:FindFirstChild("cryptstats")["En_Uranium"].Value = reset
+	player:FindFirstChild("cryptstats")["En_Amethyst"].Value = reset
+	player:FindFirstChild("cryptstats")["En_Platinum"].Value = reset
+	player:FindFirstChild("cryptstats")["En_Oil"].Value = reset
+	player:FindFirstChild("cryptstats")["En_Coal"].Value = reset
+	player:FindFirstChild("cryptstats")["En_Tin"].Value = reset
+	player:FindFirstChild("cryptstats")["En_Bronze"].Value = reset
+	player:FindFirstChild("cryptstats")["En_Adurite"].Value = reset
+	player:FindFirstChild("cryptstats")["En_Unobtainium"].Value = reset
+	player:FindFirstChild("cryptstats")["En_Turquoise"].Value = reset		
+	end
+	local final = tonumber((crypt(tostring(inv["En_Money"].Value),enc1,true))) or 0
+	player:FindFirstChild("leaderstats").Money.Value = final
+end
+end
+
+--end
+
+
+function script.Depth.OnServerInvoke(player, depth)
+	local enc1 = {29, 58, 93, 28, 27}
+	repeat wait() until player:FindFirstChild("leaderstats")
+	player["leaderstats"].Depth.Value = depth
+	local oldMon = (crypt(tostring(player:FindFirstChild("cryptstats")["En_Money"].Value),enc1,true))
+	local oldMine = (crypt(tostring(player:FindFirstChild("cryptstats")["En_Mined"].Value),enc1,true))
+	player:FindFirstChild("leaderstats").Money.Value = oldMon
+	player:FindFirstChild("leaderstats").Mined.Value = oldMine
+end
+
+
+
+function script.LightOpen.OnServerInvoke(player, radius, bright)
+repeat wait() until workspace:FindFirstChild(player.Name)
+local pick = game.ReplicatedStorage.Pickaxe:Clone()
+pick.Parent = player:WaitForChild("Backpack")
+--pick.ToolScript.Disabled = false
+local l1 = game.ReplicatedStorage.SL:Clone()
+local l2 = game.ReplicatedStorage.PL:Clone()
+l1.Range = radius
+l2.Range = (radius/3)
+l1.Brightness = bright
+l2.Brightness = bright
+l1.Parent = workspace:FindFirstChild(player.Name).Torso
+l2.Parent = workspace:FindFirstChild(player.Name).Torso
+print("[GS] Lighting Added to "..player.Name)
+end

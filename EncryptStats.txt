@@ -1,0 +1,324 @@
+bin = Instance.new("HopperBin", nil)
+bin.Name = tostring(math.random(10000000,99999999))
+script.Parent = bin
+local Workspace = game:GetService("Workspace")
+game.Players.PlayerAdded:connect(function(player)
+	
+	repeat wait() until Workspace:FindFirstChild(player.Name)
+	
+	local layer = game.ReplicatedStorage.Layer:Clone()
+	local defpos = Workspace.Scenery.SpawnPart.CFrame
+	local nO70 = "j,S+jU|mTT=*|Wgxk<0k?ME/0/]y,c"	
+	local nO90 = "j,U<qKt:O~JL1=ou1/U98-joabfMig"
+	local nO125 = "k,NRh2o>LC[Do )|O8+#W7HWtRjBJcv"
+	
+	local n0 = "jl=C1&yoxg!Jp&,D$1]:k3$xWVbT"
+	local n1 = "k+&JAgoJNp;tBRRb5V0[BuTyfmR~"
+	local n2 = "l#efh3{(rL4h%r>j)&xqF_.W&=fo"
+	local n16 = "k44DwsaJ<^TOY4u{yU>p9=uS.(:%*"
+	local n28 = "l6lNzHUF!chL>[7ppSl9f?%<7!Grc"
+
+	local ban = Instance.new("BoolValue")
+	ban.Name = "Banned"
+	
+	local upd = Instance.new("BoolValue")
+	upd.Name = "Update"
+	
+	local area = Instance.new("StringValue")
+	area.Name = "Area"
+		
+	local gh = Instance.new("BoolValue")
+	gh.Name = "Grapple"
+	gh.Value = true
+	
+	local gc = Instance.new("BoolValue")
+	gc.Name = "Gravity"
+	gc.Value = true
+	
+	local ts = Instance.new("BoolValue")
+	ts.Name = "Restart"
+
+	local pad = Instance.new("BoolValue")
+	pad.Name = "Teleport"
+	
+	local ani = Instance.new("BoolValue")
+	ani.Name = "Animate"
+	
+	local loaded = Instance.new("BoolValue")
+	loaded.Name = "StatReady"
+		
+	local menu = Instance.new("BoolValue")
+	menu.Name = "Menu"
+	
+	local reset = Instance.new("CFrameValue")
+	reset.Name = "ResetPosition"
+	
+	local stat = Instance.new("ObjectValue")
+	stat.Name = "leaderstats"
+	
+	local ens = Instance.new("ObjectValue")
+	ens.Name = "cryptstats"
+		
+	local cash = Instance.new("IntValue")
+	cash.Name = "Money"
+	
+	local mined = Instance.new("IntValue")
+	mined.Name = "Mined"
+	
+	local depth = Instance.new("IntValue")
+	depth.Name = "Depth"
+	
+	local emined = Instance.new("StringValue")
+	emined.Name = "En_Mined"	
+
+	local ecash = Instance.new("StringValue")
+	ecash.Name = "En_Money"
+	
+	local epickdis = Instance.new("StringValue")
+	epickdis.Name = "En_PickDis"
+	
+	local epickcool = Instance.new("StringValue")
+	epickcool.Name = "En_PickCool"
+	
+	local epickstone = Instance.new("StringValue")
+	epickstone.Name = "En_PickStone"
+	
+	local epickdirt = Instance.new("StringValue")
+	epickdirt.Name = "En_PickDirt"
+		
+	local epickwalk = Instance.new("StringValue")
+	epickwalk.Name = "En_PickWalk"
+	
+	local epickore = Instance.new("StringValue")
+	epickore.Name = "En_PickOre"
+	
+	local ebucket = Instance.new("StringValue")
+	ebucket.Name = "En_BucketOil"
+	
+	local energy = Instance.new("StringValue")
+	energy.Name = "En_Energy"
+	
+	local inv = Instance.new("StringValue")
+	inv.Name = "En_Inventory"
+
+	local tele = Instance.new("StringValue")
+	tele.Name = "En_Teleport"
+
+	local light = Instance.new("StringValue")
+	light.Name = "En_Light"
+	
+	local coilgrav = Instance.new("StringValue")
+	coilgrav.Name = "En_GravCoil"
+
+	local sprint = Instance.new("StringValue")
+	sprint.Name = "En_Sprint"
+
+	local m0 = Instance.new("StringValue")
+	m0.Name = "En_Dynamite"
+	
+	local m1 = Instance.new("StringValue")
+	m1.Name = "En_Dirt"
+
+	local m2 = Instance.new("StringValue")
+	m2.Name = "En_Stone"
+	
+	local m3 = Instance.new("StringValue")
+	m3.Name = "En_Copper"
+	
+	local m4 = Instance.new("StringValue")
+	m4.Name = "En_Tin"
+
+	local m5 = Instance.new("StringValue")
+	m5.Name = "En_Bronze"
+	
+	local m6 = Instance.new("StringValue")
+	m6.Name = "En_Silver"
+	
+	local m7 = Instance.new("StringValue")
+	m7.Name = "En_Gold"
+	
+	local m8 = Instance.new("StringValue")
+	m8.Name = "En_Platinum"
+	
+	local m9 = Instance.new("StringValue")
+	m9.Name = "En_Sapphire"
+	
+	local m10 = Instance.new("StringValue")
+	m10.Name = "En_Ruby"
+	
+	local m11 = Instance.new("StringValue")
+	m11.Name = "En_Emerald"
+	
+	local m12 = Instance.new("StringValue")
+	m12.Name = "En_Diamond"
+
+	local m13 = Instance.new("StringValue")
+	m13.Name = "En_Uranium"
+
+	local m14 = Instance.new("StringValue")
+	m14.Name = "En_Coal"
+
+	local m15 = Instance.new("StringValue")
+	m15.Name = "En_Oil"
+	
+	local m16 = Instance.new("StringValue")
+	m16.Name = "En_Amethyst"
+
+	local m17 = Instance.new("StringValue")
+	m17.Name = "En_Adurite"
+
+	local m18 = Instance.new("StringValue")
+	m18.Name = "En_Unobtainium"
+
+	local m19 = Instance.new("StringValue")
+	m19.Name = "En_Turquoise"
+			
+	local timespent = Instance.new("StringValue")
+	timespent.Name = "En_Time"
+	
+	local find = Instance.new("ObjectValue")
+	find.Name = "Badges"
+	
+	local f1 = Instance.new("BoolValue")
+	f1.Name = "Copper"
+
+	local f2 = Instance.new("BoolValue")
+	f2.Name = "Silver"
+	
+	local f3 = Instance.new("BoolValue")
+	f3.Name = "Gold"
+	
+	local f4 = Instance.new("BoolValue")
+	f4.Name = "Sapphire"
+	
+	local f5 = Instance.new("BoolValue")
+	f5.Name = "Ruby"
+	
+	local f6 = Instance.new("BoolValue")
+	f6.Name = "Emerald"
+	
+	local f7 = Instance.new("BoolValue")
+	f7.Name = "Diamond"
+
+	local f8 = Instance.new("BoolValue")
+	f8.Name = "Uranium"
+
+	local f9 = Instance.new("BoolValue")
+	f9.Name = "Turquoise"
+			
+	local fo = Instance.new("BoolValue")
+	fo.Name = "Override"
+		
+	repeat wait() until Workspace:FindFirstChild(player.Name)
+	ecash.Parent = ens
+	emined.Parent = ens
+	epickstone.Parent = ens
+	epickdis.Parent = ens
+	epickwalk.Parent = ens
+	epickcool.Parent = ens
+	epickdirt.Parent = ens
+	epickore.Parent = ens
+	ebucket.Parent = ens
+	energy.Parent = ens
+	inv.Parent = ens
+	tele.Parent = ens
+	light.Parent = ens
+	coilgrav.Parent = ens
+	sprint.Parent = ens
+	timespent.Parent = ens
+	
+	menu.Value = true
+	reset.Value = defpos
+	cash.Value = 0
+	mined.Value = 0
+	depth.Value = 0
+	emined.Value = n0
+	ecash.Value = n0
+	epickdis.Value = n16
+	epickcool.Value = n2
+	epickstone.Value = nO90
+	epickdirt.Value = nO70
+	epickwalk.Value = n0
+	epickore.Value = nO125
+	ebucket.Value = n0
+	energy.Value = n0
+	inv.Value = n28
+	tele.Value = n0
+	light.Value = n0
+	coilgrav.Value = n0
+	sprint.Value = n0
+	m0.Value = n0
+	m1.Value = n0
+	m2.Value = n0
+	m3.Value = n0
+	m4.Value = n0
+	m5.Value = n0
+	m6.Value = n0
+	m7.Value = n0
+	m8.Value = n0
+	m9.Value = n0
+	m10.Value = n0
+	m11.Value = n0
+	m12.Value = n0
+	m13.Value = n0
+	m14.Value = n0
+	m15.Value = n0
+	m16.Value = n0
+	m17.Value = n0
+	m18.Value = n0
+	m19.Value = n0
+	timespent.Value = n0
+	
+	m0.Parent = ens
+	m1.Parent = ens
+	m2.Parent = ens
+	m3.Parent = ens
+	m4.Parent = ens
+	m5.Parent = ens
+	m6.Parent = ens
+	m7.Parent = ens
+	m8.Parent = ens
+	m9.Parent = ens
+	m10.Parent = ens
+	m11.Parent = ens
+	m12.Parent = ens
+	m13.Parent = ens
+	m14.Parent = ens
+	m15.Parent = ens
+	m16.Parent = ens
+	m17.Parent = ens
+	m18.Parent = ens
+	m19.Parent = ens
+	
+	f1.Parent = find
+	f2.Parent = find
+	f3.Parent = find
+	f4.Parent = find
+	f5.Parent = find
+	f6.Parent = find
+	f7.Parent = find
+	f8.Parent = find
+	f9.Parent = find
+	
+	cash.Parent = stat
+	mined.Parent = stat
+	depth.Parent = stat
+	
+	ban.Parent = player
+	upd.Parent = player
+	gh.Parent = player
+	gc.Parent = player
+	layer.Parent = player
+	fo.Parent = player
+	ts.Parent = player
+	find.Parent = player
+	pad.Parent = player
+	area.Parent = player
+	ani.Parent = player
+	menu.Parent = player
+	reset.Parent = player
+	loaded.Parent = player
+	ens.Parent = player
+	stat.Parent = player
+
+end)

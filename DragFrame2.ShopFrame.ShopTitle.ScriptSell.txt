@@ -1,0 +1,909 @@
+local wait = require(game.ReplicatedStorage.ServiceModule.WaitModule);
+
+local Workspace = game:GetService("Workspace")
+wait(0.5)
+
+local function convert( chars, dist, inv )
+return string.char((string.byte(chars) - 32 + (inv and -dist or dist)) % 95 + 32)
+end
+
+local function crypt(str,k,inv) -- Text Encryption.
+local enc= "";
+for i=1,#str do
+if(#str-k[5] >= i or not inv)then
+for inc=0,3 do
+if(i%4 == inc)then
+enc = enc .. convert(string.sub(str,i,i),k[inc+1],inv);
+break;
+end
+end
+end
+end
+if(not inv)then
+for i=1,k[5] do
+enc = enc .. string.char(math.random(32,126));
+end
+end
+return enc;
+end
+
+repeat wait(0.1) until Workspace:FindFirstChild(game.Players.LocalPlayer.Name)
+print("[LS] Shop Active.")
+
+local accepted
+local player = game.Players.LocalPlayer
+local enc1 = {29, 58, 93, 28, 27};
+repeat wait() until player:FindFirstChild("cryptstats")
+local inv = player.cryptstats
+local debounce = true
+wait()
+local pickshop = script.Parent.Parent.ShopSection:FindFirstChild("PickaxeFrame")
+local othershop = script.Parent.Parent.ShopSection:FindFirstChild("OtherFrame")
+local accshop = script.Parent.Parent.ShopSection:FindFirstChild("AccessoriesFrame")
+
+local picbutton = script.Parent.Parent.ShopSection:FindFirstChild("Pickaxe")
+local accbutton = script.Parent.Parent.ShopSection:FindFirstChild("Accessories")
+local othbutton = script.Parent.Parent.ShopSection:FindFirstChild("Other")
+
+local buybutton = script.Parent.PurchaseItem
+local dispname = script.Parent.NameItem
+local dispprice = script.Parent.Price
+local description = script.Parent.Description
+
+local shoptype = 0
+local pricemoney = 0
+local changedval = 0
+local whatsold
+
+function color(type,obj)
+pickshop.P1.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+pickshop.P2.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+pickshop.P3.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+pickshop.P4.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+pickshop.P5.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+pickshop.P6.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+pickshop.P7.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+pickshop.P8.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+
+accshop.P1.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+accshop.P2.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+accshop.P3.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+accshop.P4.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+accshop.P5.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+accshop.P6.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+
+othershop.P1.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+othershop.P2.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+othershop.P3.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+othershop.P4.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+othershop.P5.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+othershop.P6.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+othershop.P7.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+
+type[obj].BackgroundColor3 = Color3.new(1, 1, 1)
+end
+ 
+buybutton.MouseButton1Down:connect(function() print(whatsold)
+	if pricemoney > 0 and debounce then debounce = false
+	if whatsold ~= "Max" then
+	local currMoney = tonumber((crypt(tostring(inv["En_Money"].Value),enc1,true))) or 0
+	if currMoney > 0 and currMoney >= pricemoney and whatsold ~= "None" then
+	accepted = Workspace.Generation.Purchase:InvokeServer(currMoney, pricemoney, changedval, whatsold)
+	if accepted == "Checkpad" then
+	player.PlayerGui:FindFirstChild("StatsGUI").Telepad.Visible = true
+	player.Teleport.Value = true
+	elseif accepted == "" then
+	
+	end
+	buybutton.Text = "TRANSACTION COMPLETE [$"..pricemoney.."]"
+	dispname.Text = ""
+	dispprice.Text = ""
+	description.Text = ""
+	elseif currMoney < pricemoney then
+	buybutton.Text = "NOT ENOUGH MONEY"	
+	end
+	else
+	buybutton.Text = "MAX UPGRADE REACHED"			
+	end
+	whatsold = "None"
+	sellnumber = 0
+	pricemoney = 0
+	wait()
+	debounce = true
+	pickshop.P1.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+	pickshop.P2.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+	pickshop.P3.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+	pickshop.P4.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+	pickshop.P5.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+	pickshop.P6.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+	pickshop.P7.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+	pickshop.P8.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+	
+	accshop.P1.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+	accshop.P2.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+	accshop.P3.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+	accshop.P4.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+	accshop.P5.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+	accshop.P6.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+	
+	othershop.P1.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+	othershop.P2.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+	othershop.P3.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+	othershop.P4.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+	othershop.P5.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+	othershop.P6.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+	othershop.P7.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+
+	end
+end)
+
+picbutton.MouseButton1Down:connect(function() -- Pickaxe
+shoptype = 1
+whatsold = "None"
+sellnumber = 0
+pricemoney = 0
+pickshop.Visible = true
+accshop.Visible = false
+othershop.Visible = false
+script.Parent.Temp.Visible = false
+othbutton.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+accbutton.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+picbutton.BackgroundColor3 = Color3.new(1,1,1)
+dispname.Text = "NOTHING SELECTED"
+buybutton.Text = "NO ITEM SELECTED"
+dispprice.Text = "COST: $"..pricemoney..".00"
+description.Text = ""
+
+end)
+accbutton.MouseButton1Down:connect(function() -- Accessories
+shoptype = 2
+whatsold = "None"
+sellnumber = 0
+pricemoney = 0
+pickshop.Visible = false
+accshop.Visible = true
+othershop.Visible = false
+script.Parent.Temp.Visible = false
+othbutton.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+picbutton.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+accbutton.BackgroundColor3 = Color3.new(1,1,1)
+dispname.Text = "NOTHING SELECTED"
+buybutton.Text = "NO ITEM SELECTED"
+dispprice.Text = "COST: $"..pricemoney..".00"
+description.Text = ""
+
+end)
+othbutton.MouseButton1Down:connect(function() -- Other
+shoptype = 3
+whatsold = "None"
+sellnumber = 0
+pricemoney = 0
+pickshop.Visible = false
+accshop.Visible = false
+othershop.Visible = true
+script.Parent.Temp.Visible = false
+picbutton.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+accbutton.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+othbutton.BackgroundColor3 = Color3.new(1,1,1)
+dispname.Text = "NOTHING SELECTED"
+buybutton.Text = "NO ITEM SELECTED"
+dispprice.Text = "COST: $"..pricemoney..".00"
+description.Text = ""
+
+end)
+pickshop.P1.MouseButton1Down:connect(function() -- Speed stone
+sellnumber = 1
+color(pickshop,'P1')
+whatsold = "PickStone"
+local oldVal = tonumber((crypt(tostring(inv["En_"..whatsold].Value),enc1,true))) or 0 print(oldVal)
+if oldVal == 0.9 then
+changedval = 0.8
+pricemoney = 250
+elseif oldVal == 0.8 then
+changedval = 0.7
+pricemoney = 600
+elseif oldVal == 0.7 then
+changedval = 0.6
+pricemoney = 950
+elseif oldVal == 0.6 then
+changedval = 0.5
+pricemoney = 1500
+elseif oldVal == 0.5 then
+changedval = 0.4
+pricemoney = 2100
+elseif oldVal == 0.4 then
+changedval = 0.3
+pricemoney = 3300
+elseif oldVal == 0.3 then
+changedval = 0.2
+pricemoney = 5500
+elseif oldVal == 0.2 then
+changedval = 0.1
+pricemoney = 8000
+elseif oldVal == 0.1 then
+changedval = 0
+pricemoney = 15000
+elseif oldVal == 0 then
+changedval = -0.05
+pricemoney = 40000
+else
+whatsold = "Max"
+pricemoney = 0
+end
+dispname.Text = "STONE MINING SPEED"
+dispprice.Text = "COST: $"..pricemoney..".00"
+description.Text = "INCREASE YOUR OVERALL MINING SPEED FOR STONE BLOCKS."
+
+if pricemoney ~= 0 then
+buybutton.Text = "PURCHASE STONE MINING SPEED"
+else
+buybutton.Text = "MAX UPGRADE REACHED"
+end
+end)
+pickshop.P2.MouseButton1Down:connect(function() -- Speed dirt
+sellnumber = 2
+color(pickshop,'P2')
+whatsold = "PickDirt"
+local oldVal = tonumber((crypt(tostring(inv["En_"..whatsold].Value),enc1,true))) or 0 print(oldVal)
+if oldVal == 0.7 then
+changedval = 0.6
+pricemoney = 75
+elseif oldVal == 0.6 then
+changedval = 0.5
+pricemoney = 150
+elseif oldVal == 0.5 then
+changedval = 0.4
+pricemoney = 300
+elseif oldVal == 0.4 then
+changedval = 0.3
+pricemoney = 700
+elseif oldVal == 0.3 then
+changedval = 0.2
+pricemoney = 1300
+elseif oldVal == 0.2 then
+changedval = 0.1
+pricemoney = 2600
+elseif oldVal == 0.1 then
+changedval = 0
+pricemoney = 6700
+elseif oldVal == 0 then
+changedval = -0.02
+pricemoney = 16400
+elseif oldVal == -0.02 then
+changedval = -0.05
+pricemoney = 30000
+else
+whatsold = "Max"
+pricemoney = 0
+end
+dispname.Text = "DIRT MINING SPEED"
+dispprice.Text = "COST: $"..pricemoney..".00"
+description.Text = "INCREASE YOUR OVERALL MINING SPEED FOR DIRT BLOCKS."
+
+if pricemoney ~= 0 then
+buybutton.Text = "PURCHASE DIRT MINING SPEED"
+else
+buybutton.Text = "MAX UPGRADE REACHED"
+end
+end)
+pickshop.P3.MouseButton1Down:connect(function() -- Speed ore
+sellnumber = 3
+color(pickshop,'P3')
+whatsold = "PickOre"
+local oldVal = tonumber((crypt(tostring(inv["En_"..whatsold].Value),enc1,true))) or 0 print(oldVal)
+if oldVal == 1.25 then
+changedval = 1.15
+pricemoney = 150
+elseif oldVal == 1.15 then
+changedval = 1.05
+pricemoney = 250
+elseif oldVal == 1.05 then
+changedval = 0.95
+pricemoney = 400
+elseif oldVal == 0.95 then
+changedval = 0.85
+pricemoney = 600
+elseif oldVal == 0.85 then
+changedval = 0.75
+pricemoney = 850
+elseif oldVal == 0.75 then
+changedval = 0.65
+pricemoney = 1150
+elseif oldVal == 0.65 then
+changedval = 0.55
+pricemoney = 2700
+elseif oldVal == 0.55 then
+changedval = 0.45
+pricemoney = 3300
+elseif oldVal == 0.45 then
+changedval = 0.35
+pricemoney = 5850
+elseif oldVal == 0.35 then
+changedval = 0.25
+pricemoney = 7650
+elseif oldVal == 0.25 then
+changedval = 0.15
+pricemoney = 9900
+elseif oldVal == 0.15 then
+changedval = 0.05
+pricemoney = 14500
+elseif oldVal == 0.05 then
+changedval = 0
+pricemoney = 29500
+elseif oldVal == 0 then
+changedval = -0.05
+pricemoney = 50000
+else
+whatsold = "Max"
+pricemoney = 0
+end
+dispname.Text = "ORE MINING SPEED"
+dispprice.Text = "COST: $"..pricemoney..".00"
+description.Text = "INCREASE YOUR OVERALL MINING SPEED FOR ORES AND GEMS."
+
+if pricemoney ~= 0 then
+buybutton.Text = "PURCHASE ORE MINING SPEED"
+else
+buybutton.Text = "MAX UPGRADE REACHED"
+end
+end)
+pickshop.P4.MouseButton1Down:connect(function() -- Cooldown
+sellnumber = 4
+color(pickshop,'P4')
+whatsold = "PickCool"
+local oldVal = tonumber((crypt(tostring(inv["En_"..whatsold].Value),enc1,true))) or 0 print(oldVal)
+if oldVal == 2 then
+changedval = 1.75
+pricemoney = 200
+elseif oldVal == 1.75 then
+changedval = 1.5
+pricemoney = 400
+elseif oldVal == 1.5 then
+changedval = 1.25
+pricemoney = 700
+elseif oldVal == 1.25 then
+changedval = 1
+pricemoney = 1100
+elseif oldVal == 1 then
+changedval = 0.75
+pricemoney = 2600
+elseif oldVal == 0.75 then
+changedval = 0.5
+pricemoney = 3200
+elseif oldVal == 0.5 then
+changedval = 0.25
+pricemoney = 5100
+elseif oldVal == 0.25 then
+changedval = 0.15
+pricemoney = 7400
+elseif oldVal == 0.15 then
+changedval = 0.05
+pricemoney = 12800
+elseif oldVal == 0.05 then
+changedval = 0
+pricemoney = 30000
+else
+whatsold = "Max"
+pricemoney = 0
+end
+dispname.Text = "REDUCE MINING COOLDOWN"
+dispprice.Text = "COST: $"..pricemoney..".00"
+description.Text = "REDUCE THE WAIT COOLDOWN AFTER MINING A BLOCK."
+
+if pricemoney ~= 0 then
+buybutton.Text = "PURCHASE REDUCE COOLDOWN"
+end
+end)
+pickshop.P5.MouseButton1Down:connect(function() -- Distance
+sellnumber = 5
+color(pickshop,'P5')
+whatsold = "PickDis"
+local oldVal = tonumber((crypt(tostring(inv["En_"..whatsold].Value),enc1,true))) or 0 print(oldVal)
+if oldVal == 16 then
+changedval = 18
+pricemoney = 75
+elseif oldVal == 18 then
+changedval = 22
+pricemoney = 250
+elseif oldVal == 22 then
+changedval = 26
+pricemoney = 450
+elseif oldVal == 26 then
+changedval = 30
+pricemoney = 900
+elseif oldVal == 30 then
+changedval = 36
+pricemoney = 1800
+elseif oldVal == 36 then
+changedval = 42
+pricemoney = 2750
+elseif oldVal == 42 then
+changedval = 50
+pricemoney = 4550
+elseif oldVal == 50 then
+changedval = 64
+pricemoney = 9200
+elseif oldVal == 64 then
+changedval = 80
+pricemoney = 14600
+elseif oldVal == 80 then
+changedval = 98
+pricemoney = 28900
+elseif oldVal == 98 then
+changedval = 120
+pricemoney = 52000
+elseif oldVal == 120 then
+changedval = 140
+pricemoney = 80000
+else
+whatsold = "Max"
+pricemoney = 0
+end
+dispname.Text = "MINING DISTANCE"
+dispprice.Text = "COST: $"..pricemoney..".00"
+description.Text = "BE ABLE TO MINE BLOCKS FROM A FURTHER DISTANCE AWAY."
+
+if pricemoney ~= 0 then
+buybutton.Text = "PURCHASE MINING DISTANCE"
+else
+buybutton.Text = "MAX UPGRADE REACHED"
+end
+end)
+pickshop.P6.MouseButton1Down:connect(function() -- Walkspeed
+sellnumber = 6
+color(pickshop,'P6')
+whatsold = "Sprint"
+local oldVal = tonumber((crypt(tostring(inv["En_"..whatsold].Value),enc1,true))) or 0 print(oldVal)
+if oldVal == 0 then
+changedval = 1
+pricemoney = 300
+elseif oldVal == 1 then
+changedval = 2
+pricemoney = 600
+elseif oldVal == 2 then
+changedval = 3
+pricemoney = 1150
+elseif oldVal == 3 then
+changedval = 4
+pricemoney = 2300
+elseif oldVal == 4 then
+changedval = 5
+pricemoney = 5600
+elseif oldVal == 5 then
+changedval = 6
+pricemoney = 9800
+elseif oldVal == 6 then
+changedval = 7
+pricemoney = 13400
+elseif oldVal == 7 then
+changedval = 8
+pricemoney = 22500
+elseif oldVal == 8 then
+changedval = 9
+pricemoney = 34000
+elseif oldVal == 9 then
+changedval = 10
+pricemoney = 49700
+elseif oldVal == 10 then
+changedval = 12
+pricemoney = 110000
+else
+whatsold = "Max"
+pricemoney = 0
+end
+dispname.Text = "INCREASED WALKSPEED"
+dispprice.Text = "COST: $"..pricemoney..".00"
+description.Text = "INCREASE YOUR OVERALL WALKSPEED WHILE WALKING."
+
+if pricemoney ~= 0 then
+buybutton.Text = "PURCHASE INCREASED WALKSPEED"
+else
+buybutton.Text = "MAX UPGRADE REACHED"
+end
+end)
+pickshop.P7.MouseButton1Down:connect(function() -- Fortune
+sellnumber = 7
+color(pickshop,'P7')
+
+whatsold = "Energy"
+local oldVal = tonumber((crypt(tostring(inv["En_"..whatsold].Value),enc1,true))) or 0 print(oldVal)
+if oldVal == 0 then
+changedval = 0.9
+pricemoney = 16000
+elseif oldVal == 0.9 then
+changedval = 0.8
+pricemoney = 24200
+elseif oldVal == 0.8 then
+changedval = 0.7
+pricemoney = 56500
+elseif oldVal == 0.7 then
+changedval = 0.6
+pricemoney = 89000
+elseif oldVal == 0.6 then
+changedval = 0.5
+pricemoney = 111000
+elseif oldVal == 0.5 then
+changedval = 0.4
+pricemoney = 158000
+elseif oldVal == 0.4 then
+changedval = 0.3
+pricemoney = 204000
+elseif oldVal == 0.3 then
+changedval = 0.2
+pricemoney = 265000
+elseif oldVal == 0.2 then
+changedval = 0.1
+pricemoney = 309000
+elseif oldVal == 0.1 then
+changedval = -0.05
+pricemoney = 400000
+else
+whatsold = "Max"
+pricemoney = 0
+end
+dispname.Text = "GRANITE MINING SPEED"
+dispprice.Text = "COST: $"..pricemoney..".00"
+description.Text = "INCREASE YOUR OVERALL MINING SPEED FOR GRANITE BLOCKS."
+
+if pricemoney ~= 0 then
+buybutton.Text = "PURCHASE GRANITE MINING SPEED"
+else
+buybutton.Text = "MAX UPGRADE REACHED"
+end
+
+end)
+pickshop.P8.MouseButton1Down:connect(function() -- Chance
+sellnumber = 8
+color(pickshop,'P8')
+
+whatsold = "BucketOil"
+local oldVal = tonumber((crypt(tostring(inv["En_"..whatsold].Value),enc1,true))) or 0 print(oldVal)
+if oldVal == 0 then
+changedval = 1.2
+pricemoney = 125000
+elseif oldVal == 1.2 then
+changedval = 1.1
+pricemoney = 175000
+elseif oldVal == 1.1 then
+changedval = 1.0
+pricemoney = 250000
+elseif oldVal == 1.0 then
+changedval = 0.9
+pricemoney = 387500
+elseif oldVal == 0.9 then
+changedval = 0.8
+pricemoney = 550000
+elseif oldVal == 0.8 then
+changedval = 0.7
+pricemoney = 725000
+elseif oldVal == 0.7 then
+changedval = 0.6
+pricemoney = 962500
+elseif oldVal == 0.6 then
+changedval = 0.5
+pricemoney = 1450000
+elseif oldVal == 0.5 then
+changedval = 0.4
+pricemoney = 2000000
+elseif oldVal == 0.4 then
+changedval = 0.3
+pricemoney = 2825000
+elseif oldVal == 0.3 then
+changedval = 0.2
+pricemoney = 3975000
+elseif oldVal == 0.2 then
+changedval = 0.1
+pricemoney = 5250000
+elseif oldVal == 0.1 then
+changedval = -0.05
+pricemoney = 7000000
+else
+whatsold = "Max"
+pricemoney = 0
+end
+dispname.Text = "OBSIDIAN MINING SPEED"
+dispprice.Text = "COST: $"..pricemoney..".00"
+description.Text = "INCREASE YOUR OVERALL MINING SPEED FOR OBSIDIAN BLOCKS."
+
+if pricemoney ~= 0 then
+buybutton.Text = "PURCHASE OBSIDIAN MINING SPEED"
+else
+buybutton.Text = "MAX UPGRADE REACHED"
+end
+end)
+accshop.P1.MouseButton1Down:connect(function() -- Inventory
+sellnumber = 1
+color(accshop,'P1')
+whatsold = "Inventory"
+local oldVal = tonumber((crypt(tostring(inv["En_"..whatsold].Value),enc1,true))) or 0 print(oldVal)
+if oldVal == 28 then
+changedval = 42
+pricemoney = 125
+elseif oldVal == 42 then
+changedval = 63
+pricemoney = 450
+elseif oldVal == 63 then
+changedval = 95
+pricemoney = 900
+elseif oldVal == 95 then
+changedval = 143
+pricemoney = 1900
+elseif oldVal == 143 then
+changedval = 214
+pricemoney = 3600
+elseif oldVal == 214 then
+changedval = 321
+pricemoney = 6800
+elseif oldVal == 321 then
+changedval = 482
+pricemoney = 9300
+elseif oldVal == 482 then
+changedval = 723
+pricemoney = 16500
+elseif oldVal == 723 then
+changedval = 1084
+pricemoney = 40700
+elseif oldVal == 1084 then
+changedval = 1626
+pricemoney = 88500
+elseif oldVal == 1626 then
+changedval = 2439
+pricemoney = 180000
+elseif oldVal == 2439 then
+changedval = 3658
+pricemoney = 325000
+elseif oldVal == 3658 then
+changedval = 5487
+pricemoney = 600000	
+else
+whatsold = "Max"
+pricemoney = 0
+end
+dispname.Text = "INVENTORY SIZE"
+dispprice.Text = "COST: $"..pricemoney..".00"
+description.Text = "INCREASE YOUR TOTAL INVENTORY SIZE TO BE ABLE TO HOLD MORE ITEMS."
+
+if pricemoney ~= 0 then
+buybutton.Text = "PURCHASE INVENTORY SIZE"
+else
+buybutton.Text = "MAX UPGRADE REACHED"
+end
+end)
+accshop.P2.MouseButton1Down:connect(function() -- Teleport
+sellnumber = 2
+color(accshop,'P2')
+whatsold = "Teleport"
+local oldVal = tonumber((crypt(tostring(inv["En_"..whatsold].Value),enc1,true))) or 0 print(oldVal)
+if oldVal == 0 then
+changedval = 2
+pricemoney = 75
+elseif oldVal == 2 then
+changedval = 4
+pricemoney = 200
+elseif oldVal == 4 then
+changedval = 6
+pricemoney = 550
+elseif oldVal == 6 then
+changedval = 8
+pricemoney = 1100
+elseif oldVal == 8 then
+changedval = 12
+pricemoney = 2300
+elseif oldVal == 12 then
+changedval = 16
+pricemoney = 3400
+elseif oldVal == 16 then
+changedval = 20
+pricemoney = 5000
+elseif oldVal == 20 then
+changedval = 24
+pricemoney = 7200
+elseif oldVal == 24 then
+changedval = 28
+pricemoney = 9600
+elseif oldVal == 28 then
+changedval = 36
+pricemoney = 16000
+elseif oldVal == 36 then
+changedval = 46
+pricemoney = 22100
+elseif oldVal == 46 then
+changedval = 60
+pricemoney = 34200
+elseif oldVal == 60 then
+changedval = 80
+pricemoney = 49600
+elseif oldVal == 80 then
+changedval = 100
+pricemoney = 120000
+elseif oldVal == 100 then
+changedval = 125
+pricemoney = 175000
+elseif oldVal == 125 then
+changedval = 160
+pricemoney = 230000
+elseif oldVal == 160 then
+changedval = 200
+pricemoney = 310000
+elseif oldVal == 200 then
+changedval = 360
+pricemoney = 530000
+elseif oldVal == 370 then
+changedval = 450
+pricemoney = 650000
+else
+whatsold = "Max"
+pricemoney = 0
+end
+dispname.Text = "TELEPORT COOLDOWN"
+dispprice.Text = "COST: $"..pricemoney..".00"
+description.Text = "REDUCE THE WAITING TIME FOR TELEPORT COOLDOWN AND THE TIME IT TAKES TO TELEPORT TO THE SURFACE."
+
+if pricemoney ~= 0 then
+buybutton.Text = "PURCHASE TELEPORT COOLDOWN"
+else
+buybutton.Text = "MAX UPGRADE REACHED"
+end
+end)
+accshop.P3.MouseButton1Down:connect(function() -- Sprint
+sellnumber = 3
+color(accshop,'P3')
+whatsold = "Light"
+local oldVal = tonumber((crypt(tostring(inv["En_"..whatsold].Value),enc1,true))) or 0 print(oldVal)
+if oldVal == 0 then
+changedval = 2
+pricemoney = 250
+elseif oldVal == 2 then
+changedval = 4
+pricemoney = 600
+elseif oldVal == 4 then
+changedval = 6
+pricemoney = 1150
+elseif oldVal == 6 then
+changedval = 9
+pricemoney = 2600
+elseif oldVal == 9 then
+changedval = 13
+pricemoney = 5150
+elseif oldVal == 13 then
+changedval = 16
+pricemoney = 9700
+elseif oldVal == 16 then
+changedval = 19
+pricemoney = 18600
+elseif oldVal == 19 then
+changedval = 25
+pricemoney = 38900
+elseif oldVal == 25 then
+changedval = 32
+pricemoney = 110000
+else
+whatsold = "Max"
+pricemoney = 0
+end
+dispname.Text = "INCREASED VISIBILITY"
+dispprice.Text = "COST: $"..pricemoney..".00"
+description.Text = "INCREASE YOUR RANGE TO SEE AT A GREATER DISTANCE AND BRIGHTNESS WHEN DOWN IN THE QUARRY."
+
+if pricemoney ~= 0 then
+buybutton.Text = "PURCHASE INCREASED VISIBILITY"
+else
+buybutton.Text = "MAX UPGRADE REACHED"
+end
+end)
+accshop.P4.MouseButton1Down:connect(function() -- Visibility
+sellnumber = 4
+color(accshop,'P4')
+whatsold = "Dynamite"
+pricemoney = 25000
+local oldVal = tonumber((crypt(tostring(inv["En_Dynamite"].Value),enc1,true))) or 0 print(oldVal)
+dispname.Text = "+20 DYNAMITE"
+dispprice.Text = "COST: $"..pricemoney..".00"
+description.Text = "A EXPLOSIVE EFFECTIVE IN CLEARING SMALL AREAS. 50% CHANCE OF PICKING UP BLOCKS DESTROYED."
+changedval = tonumber((crypt(tostring(inv["En_Dynamite"].Value),enc1,true))) or 0
+if pricemoney ~= 0 then
+buybutton.Text = "PURCHASE +20 DYNAMITE"
+end
+if player.Backpack:FindFirstChild("Dynamite") then
+local inv = player.cryptstats
+local d1 = tonumber((crypt(tostring(inv["En_Dirt"].Value),enc1,true))) or 0
+local d2 = tonumber((crypt(tostring(inv["En_Stone"].Value),enc1,true))) or 0
+local d3 = tonumber((crypt(tostring(inv["En_Copper"].Value),enc1,true))) or 0
+local d4 = tonumber((crypt(tostring(inv["En_Tin"].Value),enc1,true))) or 0
+local d5 = tonumber((crypt(tostring(inv["En_Bronze"].Value),enc1,true))) or 0
+local d6 = tonumber((crypt(tostring(inv["En_Silver"].Value),enc1,true))) or 0
+local d7 = tonumber((crypt(tostring(inv["En_Gold"].Value),enc1,true))) or 0
+local d8 = tonumber((crypt(tostring(inv["En_Platinum"].Value),enc1,true))) or 0
+local d9 = tonumber((crypt(tostring(inv["En_Sapphire"].Value),enc1,true))) or 0
+local d10 = tonumber((crypt(tostring(inv["En_Ruby"].Value),enc1,true))) or 0
+local d11 = tonumber((crypt(tostring(inv["En_Emerald"].Value),enc1,true))) or 0
+local d12 = tonumber((crypt(tostring(inv["En_Diamond"].Value),enc1,true))) or 0
+local d13 = tonumber((crypt(tostring(inv["En_Uranium"].Value),enc1,true))) or 0
+local d14 = tonumber((crypt(tostring(inv["En_Coal"].Value),enc1,true))) or 0
+local d15 = tonumber((crypt(tostring(inv["En_Oil"].Value),enc1,true))) or 0
+local d16 = tonumber((crypt(tostring(inv["En_Amethyst"].Value),enc1,true))) or 0
+local d17 = tonumber((crypt(tostring(inv["En_Adurite"].Value),enc1,true))) or 0
+local d0 = tonumber((crypt(tostring(inv["En_Dynamite"].Value),enc1,true))) or 0
+local invTot = (d0 + d1 + d2 + d3 + d4 + d5 + d6 + d7 + d8 + d9 + d10 + d11 + d12 + d13 + d14 + d15 + d16 + d17)
+	local irm = player.Backpack.Dynamite.Total.Value
+	if irm - invTot < 20 then
+	whatsold = "Max"
+	pricemoney = 0
+	buybutton.Text = "NOT ENOUGH INVENTORY SPACE"
+	end
+end
+end)
+accshop.P5.MouseButton1Down:connect(function() -- Energy
+sellnumber = 5
+color(accshop,'P5')
+end)
+accshop.P6.MouseButton1Down:connect(function() -- Gravity Coil +
+sellnumber = 6
+color(accshop,'P6')
+end)
+othershop.P1.MouseButton1Down:connect(function() -- Checkpoint Pad
+sellnumber = 1
+color(othershop,'P1')
+whatsold = "Checkpad"
+if not player:FindFirstChild("Teleport").Value then
+buybutton.Text = "PURCHASE CHECKPOINT PAD"
+pricemoney = 450
+else
+buybutton.Text = "ALREADY PURCHASED ITEM"
+whatsold = "Max"
+pricemoney = 0
+end
+dispprice.Text = "COST: $"..pricemoney..".00"
+dispname.Text = "CHECKPOINT PAD"
+description.Text = "GIVES YOU A CHECKPOINT PAD TO TELEPORT TO THAT LOCATION FROM ANYWHERE. (CURRENT SERVER USE ONLY)"
+
+end)
+othershop.P2.MouseButton1Down:connect(function() -- Checkpoint Pad
+sellnumber = 2
+color(othershop,'P2')
+whatsold = "Gravity"
+if not player:FindFirstChild("Gravity").Value then
+buybutton.Text = "PURCHASE GRAVITY COIL"
+pricemoney = 375
+else
+buybutton.Text = "'EXTRA TOOLS' GAMEPASS"
+whatsold = "Max"
+pricemoney = 0
+end
+dispprice.Text = "COST: $"..pricemoney..".00"
+dispname.Text = "GRAVITY COIL"
+description.Text = "GIVES YOU A GRAVITY COIL TO JUMP WITH EXTRA POWER! (PURCHASABLE VIA. MONEY SOON)"
+
+end)
+othershop.P3.MouseButton1Down:connect(function() -- Dirt disposal
+sellnumber = 3
+color(othershop,'P3')
+whatsold = "Grapple"
+if not player:FindFirstChild("Grapple").Value then
+buybutton.Text = "PURCHASE GRAPPLE HOOK"
+pricemoney = 1125
+else
+buybutton.Text = "'EXTRA TOOLS' GAMEPASS"
+whatsold = "Max"
+pricemoney = 0
+end
+dispprice.Text = "COST: $"..pricemoney..".00"
+dispname.Text = "GRAPPLE HOOK"
+description.Text = "GIVES YOU A GRAPPLING HOOK! CAN BE USED TO PROPEL YOURSELF UPWARDS IN SHAFTS. (PURCHASABLE VIA. MONEY SOON)"
+end)
+othershop.P4.MouseButton1Down:connect(function() -- Stone disposal
+sellnumber = 4
+color(othershop,'P4')
+end)
+othershop.P5.MouseButton1Down:connect(function() -- Shop teleport
+sellnumber = 5
+color(othershop,'P5')
+end)
+othershop.P6.MouseButton1Down:connect(function() -- Refinery teleport
+sellnumber = 6
+color(othershop,'P6')
+end)
+othershop.P7.MouseButton1Down:connect(function() -- Refinery teleport
+sellnumber = 7
+color(othershop,'P7')
+end)

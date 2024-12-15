@@ -1,0 +1,810 @@
+wait()
+
+local function wait(waittime)
+local waittime = waittime
+if waittime == nil then
+waittime = 0.03
+elseif waittime < 0 then
+waittime = 0.03
+end
+local starttime = tick()
+repeat
+game:GetService("RunService").Stepped:wait()
+until tick() >= starttime+waittime
+end
+local Workspace = game:GetService("Workspace")
+-- Conversion function (String encryption)
+function comma_value(amount)
+  local formatted = amount
+	local k
+  while true do  
+    formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1,%2')
+    if (k==0) then
+      break
+    end
+  end
+  return formatted
+end
+
+local function convert( chars, dist, inv )
+return string.char((string.byte(chars) - 32 + (inv and -dist or dist)) % 95 + 32)
+end
+
+local function crypt(str,k,inv)
+local enc= "";
+for i=1,#str do
+if(#str-k[5] >= i or not inv)then	
+for inc=0,3 do
+if(i%4 == inc)then
+enc = enc .. convert(string.sub(str,i,i),k[inc+1],inv);
+break;
+end
+end
+end
+end
+if(not inv)then
+for i=1,k[5] do
+enc = enc .. string.char(math.random(32,126));
+end
+end
+return enc;
+end
+
+local function chooseBlock(yAXIS, player)
+local rareADD = 1
+local gCOPPER = 0
+local gSILVER = 0
+local gGOLD = 0
+local gSAPPHIRE = 0
+local gRUBY = 0
+local gEMERALD = 0
+local gDIAMOND = 0
+local gURANIUM = 0
+local gAMETHYST = 0
+local gPLATINUM = 0
+local gTEKTITE = 0
+
+-- SET DEFAULT POSITION
+local yPOS = math.floor(yAXIS / 100)
+
+if yPOS >= 148 then -- 85% DIRT GENERATION
+gCOPPER = 1200 gSILVER = 300 gGOLD = 0 gSAPPHIRE = 0 gRUBY = 0 gEMERALD = 0 gDIAMOND = 0 gURANIUM = 0 gAMETHYST = 1 * rareADD gPLATINUM = 0 gTEKTITE = 0
+
+elseif yPOS >= 146 then -- 84% DIRT GENERATION
+gCOPPER = 1165 gSILVER = 400 gGOLD = 25 gSAPPHIRE = 10 gRUBY = 0 gEMERALD = 0 gDIAMOND = 0 gURANIUM = 0 gAMETHYST = 1 * rareADD gPLATINUM = 0 gTEKTITE = 0
+
+elseif yPOS >= 144 then -- 83% DIRT GENERATION
+gCOPPER = 1175 gSILVER = 450 gGOLD = 50 gSAPPHIRE = 20 gRUBY = 0 gEMERALD = 0 gDIAMOND = 0 gURANIUM = 0 gAMETHYST = 1 * rareADD gPLATINUM = 0 gTEKTITE = 0
+
+elseif yPOS >= 142 then -- 82% DIRT GENERATION
+gCOPPER = 1150 gSILVER = 500 gGOLD = 100 gSAPPHIRE = 30 gRUBY = 0 gEMERALD = 0 gDIAMOND = 0 gURANIUM = 0 gAMETHYST = 1 * rareADD gPLATINUM = 0 gTEKTITE = 0
+ 
+elseif yPOS >= 140 then -- 81% DIRT GENERATION
+gCOPPER = 1115 gSILVER = 550 gGOLD = 150 gSAPPHIRE = 40 gRUBY = 10 gEMERALD = 0 gDIAMOND = 0 gURANIUM = 0 gAMETHYST = 1 * rareADD gPLATINUM = 0 gTEKTITE = 0
+
+elseif yPOS >= 138 then -- 80% DIRT GENERATION
+gCOPPER = 1080 gSILVER = 600 gGOLD = 200 gSAPPHIRE = 50 gRUBY = 20 gEMERALD = 0 gDIAMOND = 0 gURANIUM = 0 gAMETHYST = 1 * rareADD gPLATINUM = 0 gTEKTITE = 0
+
+elseif yPOS >= 136 then -- 79% DIRT GENERATION
+gCOPPER = 1020 gSILVER = 650 gGOLD = 250 gSAPPHIRE = 60 gRUBY = 30 gEMERALD = 0 gDIAMOND = 0 gURANIUM = 0 gAMETHYST = 1 * rareADD gPLATINUM = 0 gTEKTITE = 0
+
+elseif yPOS >= 134 then -- 78% DIRT GENERATION
+gCOPPER = 985 gSILVER = 700 gGOLD = 300 gSAPPHIRE = 70 gRUBY = 40 gEMERALD = 0 gDIAMOND = 0 gURANIUM = 0 gAMETHYST = 1 * rareADD gPLATINUM = 0 gTEKTITE = 0
+
+elseif yPOS >= 132 then -- 77% DIRT GENERATION
+gCOPPER = 940 gSILVER = 750 gGOLD = 350 gSAPPHIRE = 80 gRUBY = 50 gEMERALD = 10 gDIAMOND = 0 gURANIUM = 0 gAMETHYST = 1 * rareADD gPLATINUM = 0 gTEKTITE = 0
+
+elseif yPOS >= 130 then -- 79% STONE GENERATION
+gCOPPER = 825 gSILVER = 550 gGOLD = 400 gSAPPHIRE = 250 gRUBY = 50 gEMERALD = 25 gDIAMOND = 10 gURANIUM = 0 gAMETHYST = 1 * rareADD gPLATINUM = 0 gTEKTITE = 0
+
+elseif yPOS >= 128 then -- 78% STONE GENERATION
+gCOPPER = 825 gSILVER = 550 gGOLD = 425 gSAPPHIRE = 275 gRUBY = 75 gEMERALD = 50 gDIAMOND = 15 gURANIUM = 0 gAMETHYST = 1 * rareADD gPLATINUM = 0 gTEKTITE = 0
+
+elseif yPOS >= 126 then -- 77% STONE GENERATION
+gCOPPER = 825 gSILVER = 550 gGOLD = 450 gSAPPHIRE = 300 gRUBY = 100 gEMERALD = 75 gDIAMOND = 20 gURANIUM = 0 gAMETHYST = 1 * rareADD gPLATINUM = 0 gTEKTITE = 0
+
+elseif yPOS >= 124 then -- 76% STONE GENERATION
+gCOPPER = 800 gSILVER = 575 gGOLD = 475 gSAPPHIRE = 325 gRUBY = 125 gEMERALD = 100 gDIAMOND = 25 gURANIUM = 2 * rareADD gAMETHYST = 1 * rareADD gPLATINUM = 0 gTEKTITE = 0
+
+elseif yPOS >= 122 then -- 75% STONE GENERATION
+gCOPPER = 775 gSILVER = 575 gGOLD = 475 gSAPPHIRE = 325 gRUBY = 125 gEMERALD = 100 gDIAMOND = 50 gURANIUM = 4 * rareADD gAMETHYST = 1 * rareADD gPLATINUM = 0 gTEKTITE = 0
+
+elseif yPOS >= 120 then -- 74% STONE GENERATION
+gCOPPER = 750 gSILVER = 600 gGOLD = 500 gSAPPHIRE = 400 gRUBY = 150 gEMERALD = 150 gDIAMOND = 75 gURANIUM = 6 * rareADD gAMETHYST = 2 * rareADD gPLATINUM = 0 gTEKTITE = 0
+
+elseif yPOS >= 118 then -- 73% STONE GENERATION
+gCOPPER = 600 gSILVER = 625 gGOLD = 525 gSAPPHIRE = 425 gRUBY = 175 gEMERALD = 150 gDIAMOND = 100 gURANIUM = 8 * rareADD gAMETHYST = 4 * rareADD gPLATINUM = 0 gTEKTITE = 0
+
+elseif yPOS >= 116 then -- 72% STONE GENERATION
+gCOPPER = 400 gSILVER = 625 gGOLD = 525 gSAPPHIRE = 525 gRUBY = 275 gEMERALD = 250 gDIAMOND = 125 gURANIUM = 10 * rareADD gAMETHYST = 6 * rareADD gPLATINUM = 0 gTEKTITE = 0
+
+elseif yPOS >= 114 then -- 71% STONE GENERATION
+gCOPPER = 200 gSILVER = 500 gGOLD = 650 gSAPPHIRE = 550 gRUBY = 400 gEMERALD = 300 gDIAMOND = 150 gURANIUM = 20 * rareADD gAMETHYST = 8 * rareADD gPLATINUM = 0 gTEKTITE = 0
+
+elseif yPOS >= 112 then -- 70% STONE GENERATION
+gCOPPER = 200 gSILVER = 300 gGOLD = 500 gSAPPHIRE = 600 gRUBY = 550 gEMERALD = 550 gDIAMOND = 175 gURANIUM = 30 * rareADD gAMETHYST = 10 * rareADD gPLATINUM = 0 gTEKTITE = 0
+
+elseif yPOS >= 110 then -- 68% STONE GENERATION
+gCOPPER = 200 gSILVER = 200 gGOLD = 450 gSAPPHIRE = 650 gRUBY = 525 gEMERALD = 600 gDIAMOND = 200 gURANIUM = 40 * rareADD gAMETHYST = 14 * rareADD gPLATINUM = 0 gTEKTITE = 0
+
+elseif yPOS >= 107 then -- 72% GRANITE GENERATION
+gCOPPER = 210 gSILVER = 350 gGOLD = 250 gSAPPHIRE = 350 gRUBY = 450 gEMERALD = 500 gDIAMOND = 180 gURANIUM = 36 * rareADD gAMETHYST = 17 * rareADD gPLATINUM = 5 * rareADD gTEKTITE = 0
+
+elseif yPOS >= 104 then -- 71% GRANITE GENERATION
+gCOPPER = 215 gSILVER = 355 gGOLD = 260 gSAPPHIRE = 360 gRUBY = 455 gEMERALD = 450 gDIAMOND = 185 gURANIUM = 38 * rareADD gAMETHYST = 18 * rareADD gPLATINUM = 6 * rareADD gTEKTITE = 0
+
+elseif yPOS >= 101 then -- 70% GRANITE GENERATION
+gCOPPER = 220 gSILVER = 360 gGOLD = 270 gSAPPHIRE = 370 gRUBY = 460 gEMERALD = 450 gDIAMOND = 190 gURANIUM = 40 * rareADD gAMETHYST = 19 * rareADD gPLATINUM = 7 * rareADD gTEKTITE = 0
+
+elseif yPOS >= 98 then -- 69% GRANITE GENERATION
+gCOPPER = 225 gSILVER = 365 gGOLD = 280 gSAPPHIRE = 380 gRUBY = 465 gEMERALD = 460 gDIAMOND = 195 gURANIUM = 40 * rareADD gAMETHYST = 20 * rareADD gPLATINUM = 8 * rareADD gTEKTITE = 0
+
+elseif yPOS >= 95 then -- 68% GRANITE GENERATION
+gCOPPER = 230 gSILVER = 370 gGOLD = 290 gSAPPHIRE = 390 gRUBY = 470 gEMERALD = 470 gDIAMOND = 200 gURANIUM = 42 * rareADD gAMETHYST = 21 * rareADD gPLATINUM = 9 * rareADD gTEKTITE = 0
+
+elseif yPOS >= 92 then -- 67% GRANITE GENERATION
+gCOPPER = 235 gSILVER = 275 gGOLD = 300 gSAPPHIRE = 400 gRUBY = 475 gEMERALD = 480 gDIAMOND = 205 gURANIUM = 44 * rareADD gAMETHYST = 22 * rareADD gPLATINUM = 10 * rareADD gTEKTITE = 0
+
+elseif yPOS >= 89 then -- 66% GRANITE GENERATION
+gCOPPER = 240 gSILVER = 280 gGOLD = 310 gSAPPHIRE = 410 gRUBY = 480 gEMERALD = 460 gDIAMOND = 210 gURANIUM = 46 * rareADD gAMETHYST = 23 * rareADD gPLATINUM = 11 * rareADD gTEKTITE = 0
+
+elseif yPOS >= 86 then -- 65% GRANITE GENERATION
+gCOPPER = 245 gSILVER = 285 gGOLD = 320 gSAPPHIRE = 420 gRUBY = 485 gEMERALD = 470 gDIAMOND = 215 gURANIUM = 48 * rareADD gAMETHYST = 24 * rareADD gPLATINUM = 12 * rareADD gTEKTITE = 0
+
+elseif yPOS >= 83 then -- 64% GRANITE GENERATION
+gCOPPER = 250 gSILVER = 290 gGOLD = 330 gSAPPHIRE = 430 gRUBY = 490 gEMERALD = 480 gDIAMOND = 220 gURANIUM = 50 * rareADD gAMETHYST = 25 * rareADD gPLATINUM = 13 * rareADD gTEKTITE = 1 * rareADD
+
+elseif yPOS >= 80 then -- 63% GRANITE GENERATION
+gCOPPER = 255 gSILVER = 295 gGOLD = 340 gSAPPHIRE = 440 gRUBY = 495 gEMERALD = 490 gDIAMOND = 225 gURANIUM = 52 * rareADD gAMETHYST = 26 * rareADD gPLATINUM = 14 * rareADD gTEKTITE = 1 * rareADD
+
+elseif yPOS >= 77 then -- 62% GRANITE GENERATION
+gCOPPER = 260 gSILVER = 300 gGOLD = 340 gSAPPHIRE = 450 gRUBY = 500 gEMERALD = 500 gDIAMOND = 230 gURANIUM = 54 * rareADD gAMETHYST = 27 * rareADD gPLATINUM = 15 * rareADD gTEKTITE = 1 * rareADD
+
+elseif yPOS >= 74 then -- 61% GRANITE GENERATION
+gCOPPER = 265 gSILVER = 305 gGOLD = 350 gSAPPHIRE = 460 gRUBY = 505 gEMERALD = 510 gDIAMOND = 235 gURANIUM = 56 * rareADD gAMETHYST = 28 * rareADD gPLATINUM = 16 * rareADD gTEKTITE = 2 * rareADD
+
+elseif yPOS >= 71 then -- 60% GRANITE GENERATION
+gCOPPER = 270 gSILVER = 310 gGOLD = 360 gSAPPHIRE = 470 gRUBY = 510 gEMERALD = 520 gDIAMOND = 240 gURANIUM = 58 * rareADD gAMETHYST = 29 * rareADD gPLATINUM = 17 * rareADD gTEKTITE = 2 * rareADD
+
+elseif yPOS >= 68 then -- 59% GRANITE GENERATION
+gCOPPER = 275 gSILVER = 315 gGOLD = 370 gSAPPHIRE = 480 gRUBY = 515 gEMERALD = 530 gDIAMOND = 255 gURANIUM = 60 * rareADD gAMETHYST = 30 * rareADD gPLATINUM = 18 * rareADD gTEKTITE = 2 * rareADD
+
+elseif yPOS >= 64 then -- 58% OBSIDIAN GENERATION	
+gCOPPER = 0 gSILVER = 300 gGOLD = 300 gSAPPHIRE = 400 gRUBY = 450 gEMERALD = 500 gDIAMOND = 400 gURANIUM = 66 * rareADD gAMETHYST = 34 * rareADD gPLATINUM = 18 * rareADD gTEKTITE = 2 * rareADD
+
+elseif yPOS >= 60 then -- 58% OBSIDIAN GENERATION	
+gCOPPER = 0 gSILVER = 305 gGOLD = 310 gSAPPHIRE = 405 gRUBY = 455 gEMERALD = 505 gDIAMOND = 410 gURANIUM = 72 * rareADD gAMETHYST = 38 * rareADD gPLATINUM = 21 * rareADD gTEKTITE = 3 * rareADD
+
+elseif yPOS >= 56 then -- 58% OBSIDIAN GENERATION	
+gCOPPER = 0 gSILVER = 310 gGOLD = 320 gSAPPHIRE = 410 gRUBY = 460 gEMERALD = 510 gDIAMOND = 420 gURANIUM = 78 * rareADD gAMETHYST = 42 * rareADD gPLATINUM = 24 * rareADD gTEKTITE = 5 * rareADD
+
+elseif yPOS >= 52 then -- 58% OBSIDIAN GENERATION	
+gCOPPER = 0 gSILVER = 315 gGOLD = 330 gSAPPHIRE = 415 gRUBY = 465 gEMERALD = 515 gDIAMOND = 430 gURANIUM = 84 * rareADD gAMETHYST = 46 * rareADD gPLATINUM = 27 * rareADD gTEKTITE = 6 * rareADD
+
+elseif yPOS >= 48 then -- 58% OBSIDIAN GENERATION	
+gCOPPER = 0 gSILVER = 320 gGOLD = 340 gSAPPHIRE = 420 gRUBY = 470 gEMERALD = 520 gDIAMOND = 440 gURANIUM = 90 * rareADD gAMETHYST = 50 * rareADD gPLATINUM = 30 * rareADD gTEKTITE = 7 * rareADD
+
+elseif yPOS >= 44 then -- 58% OBSIDIAN GENERATION	
+gCOPPER = 0 gSILVER = 325 gGOLD = 350 gSAPPHIRE = 425 gRUBY = 475 gEMERALD = 525 gDIAMOND = 450 gURANIUM = 96 * rareADD gAMETHYST = 54 * rareADD gPLATINUM = 33 * rareADD gTEKTITE = 8 * rareADD
+
+elseif yPOS >= 40 then -- 58% OBSIDIAN GENERATION	
+gCOPPER = 0 gSILVER = 330 gGOLD = 360 gSAPPHIRE = 430 gRUBY = 480 gEMERALD = 530 gDIAMOND = 460 gURANIUM = 102 * rareADD gAMETHYST = 58 * rareADD gPLATINUM = 36 * rareADD gTEKTITE = 9 * rareADD
+
+elseif yPOS >= 36 then -- 58% OBSIDIAN GENERATION	
+gCOPPER = 0 gSILVER = 335 gGOLD = 370 gSAPPHIRE = 435 gRUBY = 485 gEMERALD = 535 gDIAMOND = 470 gURANIUM = 108 * rareADD gAMETHYST = 62 * rareADD gPLATINUM = 39 * rareADD gTEKTITE = 10 * rareADD
+
+elseif yPOS >= 32 then -- 58% OBSIDIAN GENERATION	
+gCOPPER = 0 gSILVER = 340 gGOLD = 380 gSAPPHIRE = 440 gRUBY = 490 gEMERALD = 540 gDIAMOND = 480 gURANIUM = 114 * rareADD gAMETHYST = 66 * rareADD gPLATINUM = 42 * rareADD gTEKTITE = 11 * rareADD
+
+elseif yPOS >= 28 then -- 58% OBSIDIAN GENERATION	
+gCOPPER = 0 gSILVER = 345 gGOLD = 390 gSAPPHIRE = 445 gRUBY = 495 gEMERALD = 545 gDIAMOND = 490 gURANIUM = 120 * rareADD gAMETHYST = 70 * rareADD gPLATINUM = 45 * rareADD gTEKTITE = 12 * rareADD
+
+elseif yPOS >= 24 then -- 58% OBSIDIAN GENERATION	
+gCOPPER = 0 gSILVER = 350 gGOLD = 400 gSAPPHIRE = 450 gRUBY = 500 gEMERALD = 550 gDIAMOND = 500 gURANIUM = 126 * rareADD gAMETHYST = 74 * rareADD gPLATINUM = 48 * rareADD gTEKTITE = 13 * rareADD
+
+elseif yPOS >= 20 then -- 58% OBSIDIAN GENERATION	
+gCOPPER = 0 gSILVER = 355 gGOLD = 410 gSAPPHIRE = 455 gRUBY = 505 gEMERALD = 555 gDIAMOND = 510 gURANIUM = 132 * rareADD gAMETHYST = 78 * rareADD gPLATINUM = 51 * rareADD gTEKTITE = 14 * rareADD
+
+elseif yPOS >= 15 then -- 58% OBSIDIAN GENERATION	
+gCOPPER = 0 gSILVER = 360 gGOLD = 420 gSAPPHIRE = 460 gRUBY = 510 gEMERALD = 560 gDIAMOND = 510 gURANIUM = 136 * rareADD gAMETHYST = 80 * rareADD gPLATINUM = 54 * rareADD gTEKTITE = 15 * rareADD
+
+end
+
+	local rVAL = 0
+	if yPOS >= 132 then 
+		rVAL = math.random(1,11000) -- DIRT
+	elseif yPOS >= 68 then
+		rVAL = math.random(1,17000) -- STONE & GRANITE
+	else
+		rVAL = math.random(1,18000) -- OBSIDIAN
+	end
+
+if rVAL > 0 and rVAL <= gTEKTITE then
+local CH = math.random(1,225)
+if CH == 1 then 
+if math.random(1,15) == 1 then return game.ServerStorage.BlockType["Unobtainium"] else return game.ServerStorage.BlockType["Fire Crystal"] end end
+return game.ServerStorage.BlockType.Tektite
+-- TEKTITE GENERATION
+elseif rVAL > gTEKTITE and rVAL <= gTEKTITE+gPLATINUM then
+return game.ServerStorage.BlockType.Platinum
+-- PLATINUM GENERATION
+elseif rVAL > gTEKTITE+gPLATINUM and rVAL <= gTEKTITE+gPLATINUM+gAMETHYST then
+local CH = math.random(1,20)
+if CH == 1 then return game.ServerStorage.BlockType.Tektite else return game.ServerStorage.BlockType.Amethyst end
+-- AMETHYST GENERATION
+elseif rVAL > gTEKTITE+gPLATINUM+gAMETHYST and rVAL <= gTEKTITE+gPLATINUM+gAMETHYST+gURANIUM then
+return game.ServerStorage.BlockType.Uranium
+-- URANIUM GENERATION
+elseif rVAL > gTEKTITE+gPLATINUM+gAMETHYST+gURANIUM and rVAL <= gTEKTITE+gPLATINUM+gAMETHYST+gURANIUM+gDIAMOND then
+local CH = math.random(1,300)
+if CH == 1 then return game.ServerStorage.BlockType.Adurite else return game.ServerStorage.BlockType.Diamond end
+-- DIAMOND GENERATION
+elseif rVAL > gTEKTITE+gPLATINUM+gAMETHYST+gURANIUM+gDIAMOND and rVAL <= gTEKTITE+gPLATINUM+gAMETHYST+gURANIUM+gDIAMOND+gEMERALD then
+return game.ServerStorage.BlockType.Emerald
+-- EMERALD GENERATION
+elseif rVAL > gTEKTITE+gPLATINUM+gAMETHYST+gURANIUM+gDIAMOND+gEMERALD and rVAL <= gTEKTITE+gPLATINUM+gAMETHYST+gURANIUM+gDIAMOND+gEMERALD+gRUBY then
+return game.ServerStorage.BlockType.Ruby
+-- RUBY GENERATION
+elseif rVAL > gTEKTITE+gPLATINUM+gAMETHYST+gURANIUM+gDIAMOND+gEMERALD+gRUBY and rVAL <= gTEKTITE+gPLATINUM+gAMETHYST+gURANIUM+gDIAMOND+gEMERALD+gRUBY+gSAPPHIRE then
+return game.ServerStorage.BlockType.Sapphire
+-- SAPPHIRE GENERATION
+elseif rVAL > gTEKTITE+gPLATINUM+gAMETHYST+gURANIUM+gDIAMOND+gEMERALD+gRUBY+gSAPPHIRE and rVAL <= gTEKTITE+gPLATINUM+gAMETHYST+gURANIUM+gDIAMOND+gEMERALD+gRUBY+gSAPPHIRE+gGOLD then
+return game.ServerStorage.BlockType.Gold
+-- GOLD GENERATION
+elseif rVAL > gTEKTITE+gPLATINUM+gAMETHYST+gURANIUM+gDIAMOND+gEMERALD+gRUBY+gSAPPHIRE+gGOLD and rVAL <= gTEKTITE+gPLATINUM+gAMETHYST+gURANIUM+gDIAMOND+gEMERALD+gRUBY+gSAPPHIRE+gGOLD+gSILVER then
+local CH = math.random(1,375)
+if CH == 1 then return game.ServerStorage.BlockType.Turquoise else return game.ServerStorage.BlockType.Silver end
+-- SILVER GENERATION
+elseif rVAL > gTEKTITE+gPLATINUM+gAMETHYST+gURANIUM+gDIAMOND+gEMERALD+gRUBY+gSAPPHIRE+gGOLD+gSILVER and rVAL <= gTEKTITE+gPLATINUM+gAMETHYST+gURANIUM+gDIAMOND+gEMERALD+gRUBY+gSAPPHIRE+gGOLD+gSILVER+gCOPPER then
+local CH = math.random(1,575)
+if CH == 1 then return game.ServerStorage.BlockType.Turquoise else return game.ServerStorage.BlockType.Copper end
+-- COPPER GENERATION
+end
+-- DIRT GENERATION
+if yPOS >= 132 then
+return game.ServerStorage.BlockType.Dirt
+-- STONE GENERATION
+elseif yPOS >= 110 then
+return game.ServerStorage.BlockType.Stone
+-- GRANITE GENERATION
+elseif yPOS >= 68 then
+return game.ServerStorage.BlockType.Granite
+-- OBSIDIAN GENERATION
+else
+return game.ServerStorage.BlockType.Obsidian	
+end
+end
+
+local function confData(obj, pa, player)
+local cf, cg = Instance.new("CFrameValue"), Instance.new("CFrameValue")
+local bd = game.ServerStorage.BlockData
+        --print("Y: "..tostring(obj.Position.Y))        
+        if obj.Position.Y >= 15000 then	
+				
+                obj:Destroy()
+		elseif obj.Position.Y <= 1590 then
+		local bedrock = game.ServerStorage.BlockType.Stone:Clone()
+		bedrock.Name = "Bedrock"
+		bedrock.Parent = workspace.BlockField
+		bedrock.CFrame = obj.CFrame
+		bedrock.Locked = true
+		bedrock.Material = "Granite"
+		obj:Destroy()
+        else
+				if bd:FindFirstChild(tostring(obj.CFrame)) then
+					obj:Destroy()
+				end
+                --[[local z = bd:GetChildren()
+                for i = 1, #z do
+                        if z[i].Value == obj.CFrame then
+                                obj:Destroy()   
+                end end]]
+                
+        if obj.Parent ~= nil then
+                obj.Parent = workspace.BlockField
+				if game:GetService("GamePassService"):PlayerHasPass(player, 11525) and (obj.Name == "Copper" or obj.Name == "Silver" or obj.Name == "Gold" or obj.Name == "Sapphire" or obj.Name == "Ruby" or obj.Name == "Emerald" or obj.Name == "Diamond" or obj.Name == "Uranium" or obj.Name == "Amethyst" or obj.Name == "Platinum" or obj.Name == "Tektite" or obj.Name == "Fire Crystal" or obj.Name == "Adurite" or obj.Name == "Unobtainium") then
+				local own = Instance.new("StringValue")
+				own.Name = "Claimed"
+				own.Value = player.Name
+				own.Parent = obj
+				game.Debris:AddItem(own,3)
+				end
+                cf.Name = tostring(obj.CFrame)
+                cg.Name = tostring(pa)
+                cf.Value, cg.Value = obj.CFrame, pa
+                cf.Parent, cg.Parent = bd, bd
+        end 
+
+end end
+
+function script.BombPlant.OnServerInvoke(player, inventory, type)
+if (game:GetService("GamePassService"):PlayerHasPass(player, 11523)) and math.random(1,75) == 1 then --
+type = "Nuke"
+elseif math.random(1,250) == 1 then
+type = "Nuke"
+end
+local inv = player.cryptstats
+local enc1 = {29, 58, 93, 28, 27};	
+local num = tonumber((crypt(tostring(inv["En_Dynamite"].Value),enc1,true)))
+if num > 0 then
+if type == "Nuke" and num > 9 then
+num = num - 10
+elseif type == "Nuke" and num < 10 then
+num = 0
+elseif type == "Bomb" then
+num = num - 1
+end
+local new = crypt(tostring(num),enc1)
+game.Players[player.Name].cryptstats:FindFirstChild("En_Dynamite").Value = new
+local bomb = game.ServerStorage.Bomb:Clone()
+if Workspace[player.Name]:FindFirstChild("Dynamite") then
+if type == "Bomb" then
+bomb.Parent = Workspace
+bomb.CFrame = Workspace[player.Name].Dynamite.Handle.CFrame
+bomb:FindFirstChild("Username").Value = player.Name
+bomb:FindFirstChild("Inventory").Value = tonumber(inventory)
+elseif type == "Nuke" then
+bomb = game.ServerStorage.Nuke:Clone()
+bomb.Parent = Workspace
+bomb.CFrame = Workspace[player.Name].Dynamite.Handle.CFrame
+bomb:FindFirstChild("Username").Value = player.Name	
+bomb:FindFirstChild("Inventory").Value = tonumber(inventory)	
+end
+
+--[[elseif Workspace[player.Name]:FindFirstChild("Admin") then
+
+	if num == 0 then
+		if Workspace[player.Name]:FindFirstChild("Dynamite") then
+		Workspace[player.Name]:FindFirstChild("Dynamite").Parent = player.Backpack
+		end
+		if Workspace[player.Name]:FindFirstChild("Admin") then
+		Workspace[player.Name]:FindFirstChild("Admin").Parent = player.Backpack
+		end
+	end]]
+end
+else
+if Workspace[player.Name]:FindFirstChild("Dynamite") then
+Workspace[player.Name]:FindFirstChild("Dynamite").Parent = player.Backpack
+end
+end
+end
+
+function script.Claim.OnServerInvoke(player, location, target, delay, placed)
+local accepted = false
+if target ~= nil then
+
+if target:FindFirstChild("Owner") then
+	if target.Owner.Value == player.Name then
+		accepted = true
+	elseif not game.Players:FindFirstChild(target.Owner.Value) then
+		accepted = true
+		target:FindFirstChild("Owner"):Destroy()
+	end
+elseif target:FindFirstChild("Teled") then
+	if target.Teled.Value == player.Name then
+		accepted = true
+		if workspace.BlockField:FindFirstChild(player.Name) then
+		workspace.BlockField:FindFirstChild(player.Name):Destroy()
+		end
+	elseif not game.Players:FindFirstChild(target.Teled.Value) then
+		accepted = true
+	workspace.BlockField:FindFirstChild(target.Teled.Value):Destroy()
+	end
+else
+	accepted = true
+end
+end
+if accepted then
+local first = target.Name	
+local complete = 0
+local g = Instance.new("Decal")
+local o = Instance.new("StringValue") o.Parent = target o.Value = player.Name o.Name = "Owner"
+local a,b,c,d,e,f = g:Clone(), g:Clone(), g:Clone(), g:Clone(), g:Clone(), g:Clone()
+a.Parent, b.Parent, c.Parent, d.Parent, e.Parent, f.Parent = target, target, target, target, target, target
+a.Face, b.Face, c.Face, d.Face, e.Face, f.Face = Enum.NormalId.Left, Enum.NormalId.Top, Enum.NormalId.Bottom, Enum.NormalId.Right , Enum.NormalId.Front, Enum.NormalId.Back
+local cr = {161409451, 161409465, 161409476, 161409489, 161409502, 161409525, 161409534, 161409551, 161409824}
+local dig = Instance.new("Sound")
+dig.Parent = target
+for i = 0, 9 do if workspace:FindFirstChild(player.Name) and workspace[player.Name]:FindFirstChild("Pickaxe") then
+complete = i
+if i < 9 then
+game.Players[player.Name].Animate.Value = true
+end
+dig.Pitch = math.random(65,110)/100
+dig.Volume = 0.7
+if target ~= nil and target.Name == "Dirt" then
+dig.SoundId = "http://www.roblox.com/asset?id=138451448"
+dig:Play()
+else
+dig.SoundId = "http://www.roblox.com/asset?id=138451201"
+dig:Play()
+end
+if workspace[player.Name]:FindFirstChild("Pickaxe") then
+local dr = cr[i] or ""
+local z = target:GetChildren()
+	for j = 1, #z do 
+			if z[j]:IsA("Decal") then
+			z[j].Texture = "http://www.roblox.com/asset/?id="..dr
+			end
+	end
+	
+local ch = math.random(1,3)
+if player.Name ~= "Demonization" then
+ch = math.random(1,4)
+end
+if not (game:GetService("GamePassService"):PlayerHasPass(player, 11529) and ch > 1) and not (game:GetService("GamePassService"):PlayerHasPass(player, 11523)) then
+if (delay > -0.04) then
+wait(delay/2)
+end
+if game.Players:FindFirstChild(player.Name) then
+game.Players[player.Name].Animate.Value = false
+else
+local z = target:GetChildren()
+		for j = 1, #z do 
+			if not z[j]:IsA("SelectionBox") or not z[j].Name == "Teled" then
+			z[j]:Destroy()
+			end
+		end	
+end
+if not (delay > -0.04) then
+wait(delay/2)
+else
+wait(0)	
+end
+end
+else end
+else
+local z = target:GetChildren()
+		for j = 1, #z do 
+			if not z[j]:IsA("SelectionBox") or not z[j].Name == "Teled" then
+			z[j]:Destroy()
+			end
+		end                        
+	end	
+	end
+	local z = target:GetChildren()
+		for j = 1, #z do 
+			if not z[j]:IsA("SelectionBox") or not z[j].Name == "Teled" then
+			z[j]:Destroy()
+			end
+		end
+	if complete == 9 then
+		if target ~= nil then
+		target:Destroy()
+		local types = {}
+		for i = 1, 6 do
+		table.insert(types, chooseBlock(target.CFrame.y, player))
+		end
+		local def = game.ServerStorage.BlockType.Dirt
+		local hold = game.ServerStorage.BlockHold
+		
+		local a,b,c,d,e,f = types[1]:Clone(), types[2]:Clone(), types[3]:Clone(), types[4]:Clone(), types[5]:Clone(), types[6]:Clone()
+		a.Parent, b.Parent, c.Parent, d.Parent, e.Parent, f.Parent = hold, hold, hold, hold, hold, hold
+		local aa,bb,cc,dd,ee,ff = a.CFrame,b.CFrame,c.CFrame,d.CFrame,e.CFrame,f.CFrame
+		                a.CFrame = CFrame.new(target.CFrame.x - 8,target.CFrame.y,target.CFrame.z)
+		                confData(a,aa, player)
+		                b.CFrame = CFrame.new(target.CFrame.x + 8,target.CFrame.y,target.CFrame.z)
+		                confData(b,bb, player)
+		                c.CFrame = CFrame.new(target.CFrame.x,target.CFrame.y + 8,target.CFrame.z)
+		                confData(c,cc, player)
+		                d.CFrame = CFrame.new(target.CFrame.x,target.CFrame.y - 8,target.CFrame.z)
+		                confData(d,dd, player)
+		                e.CFrame = CFrame.new(target.CFrame.x,target.CFrame.y,target.CFrame.z + 8)
+		                confData(e,ee, player) 
+		                f.CFrame = CFrame.new(target.CFrame.x,target.CFrame.y,target.CFrame.z - 8)
+		                confData(f,ff, player) 
+		end
+		if not string.find("Guest ", player.Name) then
+			local b = game:GetService("BadgeService")
+			repeat wait() until player:FindFirstChild("Badges")
+			if first == "Dirt" and not b:UserHasBadge(player.userId, 157629209) then
+			b:AwardBadge(player.userId, 157629209)		
+			elseif first == "Stone" and not b:UserHasBadge(player.userId, 157629341) then
+			b:AwardBadge(player.userId, 157629341)
+			elseif first == "Copper" and not b:UserHasBadge(player.userId, 157629408) and not player["Badges"].Copper.Value then
+			b:AwardBadge(player.userId, 157629408)
+			player["Badges"]:FindFirstChild(first).Value = true
+			elseif first == "Granite" and not b:UserHasBadge(player.userId, 162736671) then
+			b:AwardBadge(player.userId, 162736671)
+			elseif first == "Obsidian" and not b:UserHasBadge(player.userId, 163496287) then
+			b:AwardBadge(player.userId, 163496287)
+			elseif first == "Silver" and not b:UserHasBadge(player.userId, 157629475) and not player["Badges"].Silver.Value then
+			b:AwardBadge(player.userId, 157629475)
+			player["Badges"]:FindFirstChild(first).Value = true
+			_G.sysMsg(player.Name.." has found their first " ..first.. "!", "Mid gray")
+			elseif first == "Gold" and not b:UserHasBadge(player.userId, 157629559) and not player["Badges"].Gold.Value then
+			b:AwardBadge(player.userId, 157629559)
+			player["Badges"]:FindFirstChild(first).Value = true
+			_G.sysMsg(player.Name.." has found their first " ..first.. "!", "Bright yellow")
+			elseif first == "Sapphire" and not b:UserHasBadge(player.userId, 157629625) and not player["Badges"].Sapphire.Value then
+			b:AwardBadge(player.userId, 157629625)
+			player["Badges"]:FindFirstChild(first).Value = true
+			_G.sysMsg(player.Name.." has found their first " ..first.. "!", "Bright blue")
+			elseif first == "Ruby" and not b:UserHasBadge(player.userId, 157629680) and not player["Badges"].Ruby.Value then
+			b:AwardBadge(player.userId, 157629680)
+			player["Badges"]:FindFirstChild(first).Value = true
+			_G.sysMsg(player.Name.." has found their first " ..first.. "!", "Bright red")
+			elseif first == "Emerald" and not b:UserHasBadge(player.userId, 157629819) and not player["Badges"].Emerald.Value then
+			b:AwardBadge(player.userId, 157629819)
+			player["Badges"]:FindFirstChild(first).Value = true
+			_G.sysMsg(player.Name.." has found their first " ..first.. "!", "Bright green")
+			elseif first == "Diamond" and not b:UserHasBadge(player.userId, 157629867) and not player["Badges"].Diamond.Value then
+			b:AwardBadge(player.userId, 157629867)
+			player["Badges"]:FindFirstChild(first).Value = true
+			_G.sysMsg(player.Name.." has found their first " ..first.. "!", "Toothpaste")
+			elseif first == "Turquoise" and not b:UserHasBadge(player.userId, 189996196) and not player["Badges"].Turquoise.Value then
+			b:AwardBadge(player.userId, 189996196)
+			player["Badges"]:FindFirstChild(first).Value = true
+			--_G.sysMsg(player.Name.." has found their first " ..first.. "!", "Turquoise")
+			elseif first == "Uranium" and not b:UserHasBadge(player.userId, 157629918) then
+			b:AwardBadge(player.userId, 157629918)	
+			elseif first == "Amethyst" and not b:UserHasBadge(player.userId, 157629997) then
+			b:AwardBadge(player.userId, 157629997)
+			elseif first == "Platinum" and not b:UserHasBadge(player.userId, 162736595) then
+			b:AwardBadge(player.userId, 162736595)
+			elseif first == "Tektite" and not b:UserHasBadge(player.userId, 158709493)then
+			b:AwardBadge(player.userId, 158709493)
+			elseif first == "Adurite" and not b:UserHasBadge(player.userId, 171382390)then
+			b:AwardBadge(player.userId, 171382390)
+			elseif first == "Fire Crystal" and not b:UserHasBadge(player.userId, 163496491)then
+			b:AwardBadge(player.userId, 163496491)
+			elseif first == "Unobtainium" and not b:UserHasBadge(player.userId, 184153298)then
+			b:AwardBadge(player.userId, 184153298)	
+			end
+		end
+	local db = true
+		if first == target.Name and db then db = false
+			
+				local enc1 = {29, 58, 93, 28, 27};		
+				local oldNum = 0
+				if first == "Tektite" then
+				oldNum = (crypt(tostring(player:FindFirstChild("cryptstats")["En_Oil"].Value),enc1,true))
+				elseif first == "Granite" then
+				oldNum = (crypt(tostring(player:FindFirstChild("cryptstats")["En_Coal"].Value),enc1,true))
+				elseif first == "Obsidian" then
+				oldNum = (crypt(tostring(player:FindFirstChild("cryptstats")["En_Tin"].Value),enc1,true))
+				elseif first == "Fire Crystal" then
+				oldNum = (crypt(tostring(player:FindFirstChild("cryptstats")["En_Bronze"].Value),enc1,true))
+				else
+				oldNum = (crypt(tostring(player:FindFirstChild("cryptstats")["En_"..first].Value),enc1,true))	
+				end
+				local oldMine = (crypt(tostring(player:FindFirstChild("cryptstats")["En_Mined"].Value),enc1,true))
+				local newEnc = (crypt(tostring(tonumber(oldNum) + 1),enc1))
+				local newMine = (crypt(tostring(oldMine + 1),enc1))
+				if first == "Tektite" then
+				player:FindFirstChild("cryptstats")["En_Oil"].Value = newEnc
+				elseif first == "Granite" then
+				player:FindFirstChild("cryptstats")["En_Coal"].Value = newEnc
+				elseif first == "Obsidian" then
+				player:FindFirstChild("cryptstats")["En_Tin"].Value = newEnc
+				elseif first == "Fire Crystal" then
+				player:FindFirstChild("cryptstats")["En_Bronze"].Value = newEnc
+				else
+				player:FindFirstChild("cryptstats")["En_"..first].Value = newEnc
+				end
+				player:FindFirstChild("cryptstats")["En_Mined"].Value = newMine
+				player:FindFirstChild("leaderstats").Mined.Value = (oldMine + 1)
+				
+				if first == "Platinum" then
+					if placed == nil or placed ~= player.Name then
+						_G.sysMsg(player.Name.." has found " ..first.. "!", "Transparent")
+					end
+				elseif first == "Amethyst" then
+					if placed == nil or placed ~= player.Name then
+						_G.sysMsg(player.Name.." has found " ..first.. "!", "Alder")
+
+					end
+				elseif first == "Tektite" then
+					if placed == nil or placed ~= player.Name then
+						_G.sysMsg(player.Name.." has found " ..first.. "!", "Really black")
+					end
+				elseif first == "Turquoise" then
+					if placed == nil or placed ~= player.Name then
+						_G.sysMsg(player.Name.." has found " ..first.. "!", "Turquoise")
+					end
+				elseif first == "Fire Crystal" then
+					if placed == nil or placed ~= player.Name then
+						_G.sysMsg(player.Name.." has found an elusive " ..first.. "!", "Deep orange")
+					end
+				elseif first == "Adurite" then
+					if placed == nil or placed ~= player.Name then
+						_G.sysMsg(player.Name.." has found " ..first.. "!", "Really red")
+					end
+				elseif first == "Unobtainium" then
+					if placed == nil or placed ~= player.Name then
+						_G.sysMsg(player.Name.." has found the legendary " ..first.. "!", "Earth blue")
+					end
+				end
+		else
+		_G.sysMsg("Error with "..player.Name.."'s "..first..". Recognized as "..target.Name..".", "Really red")
+		end
+		local chng = math.random(1,100000)
+		
+		if (chng == 1) and (first == "Stone" or first == "Dirt" or first == "Granite" or first == "Obsidian") and (not string.find("Guest ", player.Name)) then --if  then
+		local ps = game:GetService("PointsService")
+		
+		local pointsToAward
+		local s, pointsToAward = pcall(function() return ps:GetAwardablePoints() end)
+		
+		if s and pointsToAward then
+		local availablePts = 200000
+				
+		-- Get total number of points this game has already awarded to the player
+		local universeBalance
+		local t, universeBalance = pcall(function() return ps:GetGamePointBalance(player.userId) end)
+			if t and universeBalance then
+			local chance = 0
+			if (first == "Dirt") then
+			chance = 1
+			if (game:GetService("GamePassService"):PlayerHasPass(player, 159300180)) then
+			chance = 1				
+			end	
+			elseif (first == "Stone" or first == "Granite" or first == "Obsidian") then
+			chance = 1
+			if (game:GetService("GamePassService"):PlayerHasPass(player, 159300180)) then
+			chance = 1			
+			end			
+			end
+			if (pointsToAward > 0 and universeBalance < availablePts and chance == 1) then
+				--local dspoint = game:GetService("DataStoreService"):GetOrderedDataStore("PlayerPoint2")
+				local ptsAwarded = 5
+				if universeBalance < 25000 then
+					ptsAwarded = math.random(24,100)
+				elseif universeBalance < 50000 then
+					ptsAwarded = math.random(22,90)
+				elseif universeBalance < 75000 then
+					ptsAwarded = math.random(20,80)
+				elseif universeBalance < 100000 then
+					ptsAwarded = math.random(18,70)
+				elseif universeBalance < 125000 then
+					ptsAwarded = math.random(16,60)
+				elseif universeBalance < 150000 then
+					ptsAwarded = math.random(14,50)
+				elseif universeBalance < 175000 then
+					ptsAwarded = math.random(12,40)
+				elseif universeBalance < 200000 then
+					ptsAwarded = math.random(10,30)
+				else
+					ptsAwarded = math.random(5,20)
+				end
+				if (game:GetService("GamePassService"):PlayerHasPass(player, 159300180)) then
+				if universeBalance < 25000 then
+					ptsAwarded = math.random(34,140)
+				elseif universeBalance < 50000 then
+					ptsAwarded = math.random(32,130)
+				elseif universeBalance < 75000 then
+					ptsAwarded = math.random(30,120)
+				elseif universeBalance < 100000 then
+					ptsAwarded = math.random(28,110)
+				elseif universeBalance < 125000 then
+					ptsAwarded = math.random(26,100)
+				elseif universeBalance < 150000 then
+					ptsAwarded = math.random(24,90)
+				elseif universeBalance < 175000 then
+					ptsAwarded = math.random(22,80)
+				elseif universeBalance < 200000 then
+					ptsAwarded = math.random(20,70)
+				else
+					ptsAwarded = math.random(10,30)
+				end				end
+				if (ptsAwarded > 0) then
+				ps:AwardPoints(player.userId, (ptsAwarded * 10))
+				_G.sysMsg(player.Name.." found "..tostring(ptsAwarded).." Player Points.", "Toothpaste")
+				ptsAwarded = 0
+				end
+			--[[local pp = dspoint:GetAsync(player.Name) or 0
+			local ud = ps:GetGamePointBalance(player.userId)
+			if (pp and ud > pp) and game.Players:FindFirstChild(player.Name) then
+			dspoint:SetAsync(player.userId, tonumber(ud))
+			end]]
+			elseif (pointsToAward == 0) then
+				_G.sysMsg("There are no Player Points available for distribution!", "Toothpaste")		
+			end
+			end
+
+		local b = game:GetService("BadgeService")
+		if universeBalance >= 500 and not b:UserHasBadge(player.userId, 159713921) then
+		b:AwardBadge(player.userId, 159713921)
+		end
+		if universeBalance >= 200 and not b:UserHasBadge(player.userId, 159696655) then
+		b:AwardBadge(player.userId, 159696655)
+		end
+		if universeBalance >= 100 and not b:UserHasBadge(player.userId, 159695907) then
+		b:AwardBadge(player.userId, 159695907)
+		end
+		if universeBalance >= 50 and not b:UserHasBadge(player.userId, 159695739) then
+		b:AwardBadge(player.userId, 159695739)
+		end
+		if universeBalance >= 10 and not b:UserHasBadge(player.userId, 159695606) then
+		b:AwardBadge(player.userId, 159695606)
+		end
+
+		end
+		--[[else
+			local rnd = math.random(1,4)
+			if (rnd == 1 and first ~= "Dirt" and first ~= "Stone" and first ~= "Granite") then
+			local gg = Game:GetService("PointsService")
+			local pointsToAward2
+			local s2, pointsToAward2 = pcall(function() return gg:GetAwardablePoints() end)
+			if s2 and pointsToAward2 > 0 then
+				gg:AwardPoints(player.userId, 1)
+			end
+			end]]
+		end
+		db = true
+	end
+end
+end
+
+
+
+
+
+
+function script.Plant.OnServerInvoke(player, target, delay, surface, type)
+	if target ~= nil then
+	local enc1 = {29, 58, 93, 28, 27};	
+	local g = game.ServerStorage.BlockType:GetChildren()
+	local block = nil
+	local inv = player.cryptstats
+	local removeBlock = nil
+	for i = 1, #g do
+		if g[i].Name:lower() == type then
+			block = g[i]:Clone()
+			if g[i].Name ~= "Tektite" and g[i].Name ~= "Granite" and g[i].Name ~= "Obsidian" and g[i].Name ~= "Fire Crystal" then
+				removeBlock = tonumber((crypt(tostring(inv["En_"..g[i].Name].Value),enc1,true))) - 1 or 0
+				if removeBlock >= 0 then
+				player:FindFirstChild("cryptstats")["En_"..g[i].Name].Value = (crypt(tostring(removeBlock),enc1))
+				end
+			elseif g[i].Name == "Tektite" then
+				removeBlock = tonumber((crypt(tostring(inv["En_Oil"].Value),enc1,true))) - 1 or 0
+				if removeBlock >= 0 then player:FindFirstChild("cryptstats")["En_Oil"].Value = (crypt(tostring(removeBlock),enc1)) end
+			elseif g[i].Name == "Granite" then
+				removeBlock = tonumber((crypt(tostring(inv["En_Coal"].Value),enc1,true))) - 1 or 0
+				if removeBlock >= 0 then player:FindFirstChild("cryptstats")["En_Coal"].Value = (crypt(tostring(removeBlock),enc1)) end
+			elseif g[i].Name == "Obsidian" then
+				removeBlock = tonumber((crypt(tostring(inv["En_Tin"].Value),enc1,true))) - 1 or 0
+				if removeBlock >= 0 then player:FindFirstChild("cryptstats")["En_Tin"].Value = (crypt(tostring(removeBlock),enc1)) end
+			elseif g[i].Name == "Fire Crystal" then
+				removeBlock = tonumber((crypt(tostring(inv["En_Bronze"].Value),enc1,true))) - 1 or 0
+				if removeBlock >= 0 then player:FindFirstChild("cryptstats")["En_Bronze"].Value = (crypt(tostring(removeBlock),enc1)) end
+			end			
+		end
+	end
+		if block ~= nil and removeBlock >= 0 then
+		local tag = Instance.new("StringValue", block)
+		tag.Name = "Placed"
+		tag.Value = player.Name
+		block.Parent = workspace.BlockField
+		if game:GetService("GamePassService"):PlayerHasPass(player, 11525) then
+		local own = Instance.new("StringValue")
+			own.Name = "Claimed"
+			own.Value = player.Name
+			own.Parent = block
+			game.Debris:AddItem(own,5)
+		end
+			if surface == Enum.NormalId.Top then
+				block.CFrame = CFrame.new(target.CFrame.x,target.CFrame.y + 8,target.CFrame.z)
+			elseif surface == Enum.NormalId.Bottom then
+				block.CFrame = CFrame.new(target.CFrame.x,target.CFrame.y - 8,target.CFrame.z)
+			elseif surface == Enum.NormalId.Left then
+				block.CFrame = CFrame.new(target.CFrame.x - 8,target.CFrame.y,target.CFrame.z)
+			elseif surface == Enum.NormalId.Right then
+				block.CFrame = CFrame.new(target.CFrame.x + 8,target.CFrame.y,target.CFrame.z)
+			elseif surface == Enum.NormalId.Front then
+				block.CFrame = CFrame.new(target.CFrame.x,target.CFrame.y,target.CFrame.z - 8)
+			elseif surface == Enum.NormalId.Back then
+				block.CFrame = CFrame.new(target.CFrame.x,target.CFrame.y,target.CFrame.z + 8)
+			end
+			if removeBlock == 0 then
+				return nil
+			else
+				return true
+			end
+		else
+			return false
+		end
+	else
+		return false
+	end
+end

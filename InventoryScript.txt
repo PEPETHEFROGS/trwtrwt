@@ -1,0 +1,161 @@
+
+-- 	@Description: Inventory manager
+--	@Author: Dummiez
+--	@Date: 24/09/2014
+
+wait(1)
+
+print('[LS] Inventory Active.')
+
+local Workspace				= game:GetService("Workspace")
+local Players				= game:GetService("Players")
+local ReplicatedStorage 	= game:GetService("ReplicatedStorage")
+local ServiceModule 		= ReplicatedStorage.ServiceModule
+
+-- Retrieve server modules required
+
+local crypt					= require(ServiceModule.CryptModule)
+local wait 					= require(ServiceModule.WaitModule)
+
+local guiMain 				= script.Parent
+local Player 				= Players.LocalPlayer
+local Backpack				= Player.Backpack
+local PlayerGui				= Player.PlayerGui
+
+local enc1 					= {29, 58, 93, 28, 27}
+local invData				= guiMain.Inventory
+local invGui				= guiMain.List
+local amtLabel				= guiMain.TextBar.AmountLabel
+
+local cDYNAMITE				= Color3.new(255/255, 255/255, 255/255)
+local cDIRT 				= Color3.new(155/255, 118/255, 83/255)
+local cSTONE				= Color3.new(128/255, 128/255, 128/255)
+local cGRANITE				= Color3.new(255/255, 85/255, 127/255)
+local cOBSIDIAN				= Color3.new(0/255, 0/255, 91/255)
+local cCOPPER				= Color3.new(218/255, 138/255, 103/255)
+local cSILVER				= Color3.new(191/255, 193/255, 194/255)
+local cGOLD					= Color3.new(212/255, 175/255, 55/255)
+local cSAPPHIRE				= Color3.new(15/255, 82/255, 186/255)
+local cEMERALD				= Color3.new(80/255, 200/255, 120/255)
+local cRUBY					= Color3.new(155/255, 17/255, 30/255)
+local cTURQUOISE			= Color3.new(64/255, 224/255, 208/255)
+local cDIAMOND				= Color3.new(185/255, 242/255, 255/255)
+local cURANIUM				= Color3.new(0/255, 255/255, 0/255)
+local cAMETHYST				= Color3.new(153/255, 102/255, 204/255)
+local cPLATINUM				= Color3.new(229/255, 228/255, 226/255)
+local cTEKTITE				= Color3.new(17/255, 17/255, 17/255)
+local cADURITE				= Color3.new(255/255, 0/255, 0/255)
+local cFIRECRYSTAL			= Color3.new(255/255, 170/255, 0/255)
+local cUNOBTAINIUM			= Color3.new(0/255, 85/255, 127/255)
+
+repeat wait() until Player.Character
+repeat wait() until Player:FindFirstChild("cryptstats")
+
+local invAdd = 1
+if Workspace.Generation.Inventory:InvokeServer() == true then
+	invAdd = 2
+end
+
+invGui["0"].Label.TextColor3 	= cDYNAMITE
+invGui["1"].Label.TextColor3 	= cDIRT
+invGui["2"].Label.TextColor3 	= cSTONE
+invGui["3"].Label.TextColor3 	= cGRANITE
+invGui["4"].Label.TextColor3 	= cOBSIDIAN
+invGui["5"].Label.TextColor3 	= cCOPPER
+invGui["6"].Label.TextColor3 	= cSILVER
+invGui["7"].Label.TextColor3 	= cGOLD
+invGui["8"].Label.TextColor3 	= cSAPPHIRE
+invGui["9"].Label.TextColor3 	= cEMERALD
+invGui["10"].Label.TextColor3 	= cRUBY
+invGui["11"].Label.TextColor3 	= cTURQUOISE
+invGui["12"].Label.TextColor3 	= cDIAMOND
+invGui["13"].Label.TextColor3 	= cURANIUM
+invGui["14"].Label.TextColor3 	= cAMETHYST
+invGui["15"].Label.TextColor3 	= cPLATINUM
+invGui["16"].Label.TextColor3 	= cTEKTITE
+invGui["17"].Label.TextColor3 	= cADURITE
+invGui["18"].Label.TextColor3 	= cFIRECRYSTAL
+invGui["19"].Label.TextColor3 	= cUNOBTAINIUM
+
+function findItem(inv, ore)
+	if inv:FindFirstChild("En_"..ore) then
+		return tonumber((crypt(tostring(inv["En_"..ore].Value),enc1,true))) or 0
+	elseif ore == "Tektite" then
+		return tonumber((crypt(tostring(inv["En_Oil"].Value),enc1,true))) or 0
+	elseif ore == "Granite" then
+		return tonumber((crypt(tostring(inv["En_Coal"].Value),enc1,true))) or 0
+	elseif ore == "Obsidian" then
+		return tonumber((crypt(tostring(inv["En_Tin"].Value),enc1,true))) or 0
+	elseif ore == "Fire Crystal" then
+		return tonumber((crypt(tostring(inv["En_Bronze"].Value),enc1,true))) or 0
+	else
+		return 0
+	end
+end
+
+while true do wait(1/10)
+	
+	local inv = Player.cryptstats
+	
+	local d1 		= findItem(inv,"Dirt")
+	local d2 		= findItem(inv,"Stone")
+	local d3 		= findItem(inv,"Coal") --Granite
+	local d4 		= findItem(inv,"Tin") --Obsidian
+	local d5		= findItem(inv,"Copper")
+	local d6 		= findItem(inv,"Silver")
+	local d7 		= findItem(inv,"Gold")
+	local d8 		= findItem(inv,"Sapphire")
+	local d9 		= findItem(inv,"Emerald")
+	local d10 		= findItem(inv,"Ruby")
+	local d11 		= findItem(inv,"Turquoise")
+	local d12 		= findItem(inv,"Diamond")
+	local d13 		= findItem(inv,"Uranium")
+	local d14 		= findItem(inv,"Amethyst")
+	local d15 		= findItem(inv,"Platinum") 
+	local d16 		= findItem(inv,"Oil") --Tektite
+	local d17 		= findItem(inv,"Adurite")
+	local d18 		= findItem(inv,"Bronze") --Fire Crystal
+	local d19 		= findItem(inv,"Unobtainium")
+	local d0 		= findItem(inv,"Dynamite")
+	
+	invGui["0"].Label.Text 	= "DYNAMITE: " 		..d0
+	invGui["1"].Label.Text 	= "DIRT: " 			..d1
+	invGui["2"].Label.Text 	= "STONE: " 		..d2
+	invGui["3"].Label.Text 	= "GRANITE: " 		..d3
+	invGui["4"].Label.Text 	= "OBSIDIAN: " 		..d4
+	invGui["5"].Label.Text 	= "COPPER: " 		..d5
+	invGui["6"].Label.Text 	= "SILVER: " 		..d6
+	invGui["7"].Label.Text 	= "GOLD: " 			..d7
+	invGui["8"].Label.Text 	= "SAPPHIRE: " 		..d8
+	invGui["9"].Label.Text 	= "EMERALD: " 		..d9
+	invGui["10"].Label.Text = "RUBY: "			..d10
+	invGui["11"].Label.Text = "TURQUOISE: " 	..d11
+	invGui["12"].Label.Text = "DIAMOND: " 		..d12
+	invGui["13"].Label.Text = "URANIUM: " 		..d13
+	invGui["14"].Label.Text = "AMETHYST: " 		..d14
+	invGui["15"].Label.Text = "PLATINUM: " 		..d15
+	invGui["16"].Label.Text = "TEKTITE: "		..d16
+	invGui["17"].Label.Text = "ADURITE: "		..d17
+	invGui["18"].Label.Text	= "FIRE CRYSTAL: " 	..d18
+	invGui["19"].Label.Text	= "UNOBTAINIUM: " 	..d19
+	
+	local invTot = (d0 + d1 + d2 + d3 + d4 + d5 + d6 + d7 + d8 + d9 + d10 + d11 + d12 + d13 + d14 + d15 + d16 + d17 + d18 + d19)
+	local invMax = tonumber((crypt(tostring(Player.cryptstats["En_Inventory"].Value),enc1,true)))
+	invData.Value = invTot
+	wait(1/10)
+	invData.MaxValue = math.floor((invMax/1.5+10)*invAdd)
+	amtLabel.Text = tostring(invData.Value).. " /"..tostring(invData.MaxValue)
+	local perTot = (invData.Value/invData.MaxValue)
+	guiMain.TopBar:TweenSizeAndPosition(UDim2.new(perTot,0,1,0),UDim2.new(0.5-(perTot/2), 0, 0, 0), "Out", "Quad", 0,true)
+	local c1, c2, c3 = guiMain.TopBar.BarCenter, guiMain.TopBar.BarLeft, guiMain.TopBar.BarRight
+	local R = guiMain.TopBar.Size.X.Scale
+	c1.ImageColor3, c2.ImageColor3, c3.ImageColor3 = Color3.new(R,(1-R),0), Color3.new(R,(1-R),0), Color3.new(R,(1-R),0)
+
+	if Backpack:FindFirstChild("Dynamite") and Backpack.Dynamite:FindFirstChild("Total") then
+		Backpack.Dynamite.Total.Value = math.floor((invMax/1.5+10)*invAdd) or 0
+	elseif Workspace:FindFirstChild(Player.Name) then
+		if Player.Character:FindFirstChild("Dynamite") and Player.Character.Dynamite:FindFirstChild("Total") then
+			Player.Character.Dynamite.Total.Value = math.floor((invMax/1.5+10)*invAdd) or 0
+		end
+	end
+end

@@ -1,0 +1,559 @@
+local wait = require(game.ReplicatedStorage.ServiceModule.WaitModule);
+
+wait(0.5)
+
+local function convert( chars, dist, inv )
+return string.char((string.byte(chars) - 32 + (inv and -dist or dist)) % 95 + 32)
+end
+
+local function crypt(str,k,inv) -- Text Encryption.
+local enc= "";
+for i=1,#str do
+if(#str-k[5] >= i or not inv)then
+for inc=0,3 do
+if(i%4 == inc)then
+enc = enc .. convert(string.sub(str,i,i),k[inc+1],inv);
+break;
+end
+end
+end
+end
+if(not inv)then
+for i=1,k[5] do
+enc = enc .. string.char(math.random(32,126));
+end
+end
+return enc;
+end
+local Workspace = game:GetService("Workspace")
+repeat wait(0.1) until Workspace:FindFirstChild(game.Players.LocalPlayer.Name)
+print("[LS] Refinery Active.")
+
+local player = game.Players.LocalPlayer
+local enc1 = {29, 58, 93, 28, 27};
+repeat wait() until player:FindFirstChild("cryptstats")
+local inv = player.cryptstats
+wait()
+local debounce = false
+local ore = script.Parent.Parent.ShopSection.ScrollingFrame
+local sellbutton = script.Parent.SellInventory
+local dispname = script.Parent.NameItem
+local dispprice = script.Parent.Price
+local description = script.Parent.Description
+local sellnumber = 0
+local givemoney = 0
+local numores = 0
+local whatsold = "None"
+
+function selectBool(type, price)
+local d1 = tonumber((crypt(tostring(inv["En_Dirt"].Value),enc1,true))) or 0
+local d2 = tonumber((crypt(tostring(inv["En_Stone"].Value),enc1,true))) or 0
+local d3 = tonumber((crypt(tostring(inv["En_Copper"].Value),enc1,true))) or 0
+local d15 = tonumber((crypt(tostring(inv["En_Tin"].Value),enc1,true))) or 0
+local d16 = tonumber((crypt(tostring(inv["En_Bronze"].Value),enc1,true))) or 0
+local d4 = tonumber((crypt(tostring(inv["En_Silver"].Value),enc1,true))) or 0
+local d5 = tonumber((crypt(tostring(inv["En_Gold"].Value),enc1,true))) or 0
+local d6 = tonumber((crypt(tostring(inv["En_Sapphire"].Value),enc1,true))) or 0
+local d7 = tonumber((crypt(tostring(inv["En_Ruby"].Value),enc1,true))) or 0
+local d8 = tonumber((crypt(tostring(inv["En_Emerald"].Value),enc1,true))) or 0
+local d9 = tonumber((crypt(tostring(inv["En_Diamond"].Value),enc1,true))) or 0
+local d10 = tonumber((crypt(tostring(inv["En_Uranium"].Value),enc1,true))) or 0
+local d12 = tonumber((crypt(tostring(inv["En_Oil"].Value),enc1,true))) or 0
+local d11 = tonumber((crypt(tostring(inv["En_Amethyst"].Value),enc1,true))) or 0	
+local d13 = tonumber((crypt(tostring(inv["En_Coal"].Value),enc1,true))) or 0
+local d14 = tonumber((crypt(tostring(inv["En_Platinum"].Value),enc1,true))) or 0
+local d17 = tonumber((crypt(tostring(inv["En_Adurite"].Value),enc1,true))) or 0
+local d18 = tonumber((crypt(tostring(inv["En_Unobtainium"].Value),enc1,true))) or 0
+local d19 = tonumber((crypt(tostring(inv["En_Turquoise"].Value),enc1,true))) or 0
+
+if type.Select.Value then
+ore.Ore1.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore2.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore3.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore4.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore5.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore6.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore7.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore8.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore9.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore10.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore11.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore12.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore13.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore14.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore15.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore16.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore17.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore18.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore19.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+
+ore.Ore1.Select.Value = false
+ore.Ore2.Select.Value = false
+ore.Ore3.Select.Value = false
+ore.Ore4.Select.Value = false
+ore.Ore5.Select.Value = false
+ore.Ore6.Select.Value = false
+ore.Ore7.Select.Value = false
+ore.Ore8.Select.Value = false
+ore.Ore9.Select.Value = false
+ore.Ore10.Select.Value = false
+ore.Ore11.Select.Value = false
+ore.Ore12.Select.Value = false
+ore.Ore13.Select.Value = false
+ore.Ore14.Select.Value = false
+ore.Ore15.Select.Value = false
+ore.Ore16.Select.Value = false
+ore.Ore17.Select.Value = false
+ore.Ore18.Select.Value = false
+ore.Ore19.Select.Value = false
+
+local t1 = d1 * 2
+local t2 = d2 * 4
+local t3 = d3 * 12
+local t4 = d4 * 24
+local t5 = d5 * 34
+local t6 = d6 * 48
+local t7 = d7 * 66
+local t8 = d8 * 86
+local t9 = d9 * 194
+local t10 = d10 * 510
+local t11 = d11 * 2048
+local t12 = d12 * 16384
+local t13 = d13 * 12
+local t14 = d14 * 6096
+local t15 = d15 * 24
+local t16 = d16 * 171072
+local t17 = d17 * 78720
+local t18 = d18 * 661337
+local t19 = d19 * 2014
+
+numores = d1+d2+d3+d4+d5+d6+d7+d8+d8+d9+d10+d11+d12+d13+d14+d15+d16+d17+d18+d19
+givemoney = t1+t2+t3+t4+t5+t6+t7+t8+t8+t9+t10+t11+t12+t13+t14+t15+t16+t17+t18+t19
+dispname.Text = "SELL ALL"
+dispprice.Text = "VALUE: $".. t1+t2+t3+t4+t5+t6+t7+t8+t8+t9+t10+t11+t12+t13+t14+t15+t16+t17+t18+t19..".00"
+if givemoney > 0 then
+whatsold = "All"
+sellbutton.Text = "SELL ALL FOR $".. t1+t2+t3+t4+t5+t6+t7+t8+t8+t9+t10+t11+t12+t13+t14+t15+t16+t17+t18+t19
+description.Text = "SELL ALL THE THINGS YOU HAVE IN YOUR INVENTORY."
+else
+whatsold = "None"
+sellbutton.Text = "NOTHING TO SELL"
+description.Text = "SELL ALL THE THINGS YOU HAVE IN YOUR INVENTORY."
+end
+else
+ore.Ore1.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore2.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore3.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore4.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore5.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore6.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore7.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore8.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore9.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore10.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore11.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore12.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore13.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore14.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore15.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore16.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore17.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore18.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+ore.Ore19.BackgroundColor3 = Color3.new(128/255, 128/255, 128/255)
+
+type.BackgroundColor3 = Color3.new(1,1,1)
+ore.Ore1.Select.Value = false
+ore.Ore2.Select.Value = false
+ore.Ore3.Select.Value = false
+ore.Ore4.Select.Value = false
+ore.Ore5.Select.Value = false
+ore.Ore6.Select.Value = false
+ore.Ore7.Select.Value = false
+ore.Ore8.Select.Value = false
+ore.Ore9.Select.Value = false
+ore.Ore10.Select.Value = false
+ore.Ore11.Select.Value = false
+ore.Ore12.Select.Value = false
+ore.Ore13.Select.Value = false
+ore.Ore14.Select.Value = false
+ore.Ore15.Select.Value = false
+ore.Ore16.Select.Value = false
+ore.Ore17.Select.Value = false
+ore.Ore18.Select.Value = false
+ore.Ore19.Select.Value = false
+
+type.Select.Value = true
+dispname.Text = type.Text
+dispprice.Text = "VALUE: $"..price..".00"
+whatsold = "None"
+if sellnumber == 1 then
+	givemoney = price*d1
+	numores = d1
+	description.Text = "BASIC DIRT, CAN BE USED FOR FARMLAND."
+	if givemoney > 0 then
+	sellbutton.Text = "SELL "..d1.. " "..type.Text.. " FOR $"..givemoney
+	whatsold = "Dirt"
+	else
+	sellbutton.Text = "NO "..type.Text.. " TO SELL"
+	end
+elseif sellnumber == 2 then
+	givemoney = price*d2
+	numores = d2
+	description.Text = "STONE, IT'S PRETTY HARD. USED FOR BUILDING STRUCTURES. FOUND AROUND -170 BLOCKS DEEP."
+	if givemoney > 0 then
+	sellbutton.Text = "SELL "..d2.. " "..type.Text.. " FOR $"..givemoney
+	whatsold = "Stone"
+	else
+	sellbutton.Text = "NO "..type.Text.. " TO SELL"
+	end
+elseif sellnumber == 3 then
+	givemoney = price*d3
+	numores = d3
+	description.Text = "A COMMON ORE IN THE EARTH, CAN BE USED FOR CREATING TOOLS. MOST COMMON AROUND -75 BLOCKS DEEP."
+	if givemoney > 0 then
+	sellbutton.Text = "SELL "..d3.. " "..type.Text.. " FOR $"..givemoney
+	whatsold = "Copper"
+	else
+	sellbutton.Text = "NO "..type.Text.. " TO SELL"
+	end
+elseif sellnumber == 4 then
+	givemoney = price*d4
+	numores = d4
+	description.Text = "UNCOMMON ORE NEAR THE SURFACE, PLENTIFUL BELOW -100."
+	if givemoney > 0 then
+	sellbutton.Text = "SELL "..d4.. " "..type.Text.. " FOR $"..givemoney
+	whatsold = "Silver"
+	else
+	sellbutton.Text = "NO "..type.Text.. " TO SELL"
+	end
+elseif sellnumber == 5 then
+	givemoney = price*d5
+	numores = d5
+	description.Text = "GENERALLY A VALUABLE ORE FOR INTERMEDIATE LEVEL MINERS. FOUND BELOW -50, PLENTIFUL AROUND -150"
+	if givemoney > 0 then
+	sellbutton.Text = "SELL "..d5.. " "..type.Text.. " FOR $"..givemoney
+	whatsold = "Gold"
+	else
+	sellbutton.Text = "NO "..type.Text.. " TO SELL"
+	end
+elseif sellnumber == 6 then
+	givemoney = price*d6
+	numores = d6
+	description.Text = "THE MOST COMMON GEM THAT CAN BE FOUND IN THE QUARRY. CAN BE FOUND BELOW -75"
+	if givemoney > 0 then
+	sellbutton.Text = "SELL "..d6.. " "..type.Text.. " FOR $"..givemoney
+	whatsold = "Sapphire"
+	else
+	sellbutton.Text = "NO "..type.Text.. " TO SELL"
+	end
+elseif sellnumber == 7 then
+	givemoney = price*d7
+	numores = d7
+	description.Text = "UNCOMMON GEM, USED IN ACCESSORIES; VALUABLE. CAN BE FOUND BELOW -125"
+	if givemoney > 0 then
+	sellbutton.Text = "SELL "..d7.. " "..type.Text.. " FOR $"..givemoney
+	whatsold = "Ruby"
+	else
+	sellbutton.Text = "NO "..type.Text.. " TO SELL"
+	end
+elseif sellnumber == 8 then
+	givemoney = price*d8
+	numores = d8
+	description.Text = "A VALUABLE GEM TO MINE AND CAN BE FOUND BELOW -150. COMMON BELOW -250"
+	if givemoney > 0 then
+	sellbutton.Text = "SELL "..d8.. " "..type.Text.. " FOR $"..givemoney
+	whatsold = "Emerald"
+	else
+	sellbutton.Text = "NO "..type.Text.. " TO SELL"
+	end
+elseif sellnumber == 9 then
+	givemoney = price*d9
+	numores = d9
+	description.Text = "A VERY VALUABLE GEM TO FIND, CAN BE FOUND BELOW -275."
+	if givemoney > 0 then
+	sellbutton.Text = "SELL "..d9.. " "..type.Text.. " FOR $"..givemoney
+	whatsold = "Diamond"
+	else
+	sellbutton.Text = "NO "..type.Text.. " TO SELL"
+	end
+	elseif sellnumber == 10 then
+	givemoney = price*d10
+	numores = d10
+	description.Text = "A VERY RARE METALLIC ELEMENT. GLOWS GREEN IN THE DARK. CAN BE FOUND BELOW -350"
+	if givemoney > 0 then
+	sellbutton.Text = "SELL "..d10.. " "..type.Text.. " FOR $"..givemoney
+	whatsold = "Uranium"
+	else
+	sellbutton.Text = "NO "..type.Text.. " TO SELL"
+	end	
+	elseif sellnumber == 11 then
+	givemoney = price*d11
+	numores = d11
+	description.Text = "HIGHEST GRADE GEM, USED FOR EXCEPTIONAL ENHANCEMENTS. EXTREMELY VALUABLE. UNKNOWN DEPTH."
+	if givemoney > 0 then
+	sellbutton.Text = "SELL "..d11.. " "..type.Text.. " FOR $"..givemoney
+	whatsold = "Amethyst"
+	else
+	sellbutton.Text = "NO "..type.Text.. " TO SELL"
+	end		
+	elseif sellnumber == 12 then
+	givemoney = price*d12
+	numores = d12
+	description.Text = "COULD POSSIBLY BE EXTRATERRESTIAL. IT HIDES WITHIN.."
+	if givemoney > 0 then
+	sellbutton.Text = "SELL "..d12.. " "..type.Text.. " FOR $"..givemoney
+	whatsold = "Oil"
+	else
+	sellbutton.Text = "NO "..type.Text.. " TO SELL"
+	end		
+	elseif sellnumber == 13 then
+	givemoney = price*d13
+	numores = d13
+	description.Text = "FOUND DEEP WITHIN THE EARTH, HARDER THAN STONE. "
+	if givemoney > 0 then
+	sellbutton.Text = "SELL "..d13.. " "..type.Text.. " FOR $"..givemoney
+	whatsold = "Coal"
+	else
+	sellbutton.Text = "NO "..type.Text.. " TO SELL"
+	end			
+	elseif sellnumber == 14 then
+	givemoney = price*d14
+	numores = d14
+	description.Text = "THE MOST PRECIOUS ALLOY WITHIN THE QUARRY!"
+	if givemoney > 0 then
+	sellbutton.Text = "SELL "..d14.. " "..type.Text.. " FOR $"..givemoney
+	whatsold = "Platinum"
+	else
+	sellbutton.Text = "NO "..type.Text.. " TO SELL"
+	end				
+	elseif sellnumber == 15 then
+	givemoney = price*d15
+	numores = d15
+	description.Text = "FOUND IN THE EXTREME ZONE, WHERE FEW DARE TO MINE."
+	if givemoney > 0 then
+	sellbutton.Text = "SELL "..d15.. " "..type.Text.. " FOR $"..givemoney
+	whatsold = "Tin"
+	else
+	sellbutton.Text = "NO "..type.Text.. " TO SELL"
+	end
+	elseif sellnumber == 16 then
+	givemoney = price*d16
+	numores = d16
+	description.Text = "THE LEGENDARY MYSTERY ORE!"
+	if givemoney > 0 then
+	sellbutton.Text = "SELL "..d16.. " "..type.Text.. " FOR $"..givemoney
+	whatsold = "Bronze"
+	else
+	sellbutton.Text = "NO "..type.Text.. " TO SELL"
+	end
+	elseif sellnumber == 17 then
+	givemoney = price*d17
+	numores = d17
+	description.Text = "PEOPLE USE THIS TO MAKE HATS!"
+	if givemoney > 0 then
+	sellbutton.Text = "SELL "..d17.. " "..type.Text.. " FOR $"..givemoney
+	whatsold = "Adurite"
+	else
+	sellbutton.Text = "NO "..type.Text.. " TO SELL"
+	end
+	elseif sellnumber == 18 then
+	dispprice.Text = "VALUE: $???"
+	givemoney = price*d18
+	numores = d18
+	description.Text = "IT CAME FROM PANDORA!"
+	if givemoney > 0 then
+	sellbutton.Text = "SELL "..d18.. " "..type.Text.. " FOR $???"--..givemoney
+	whatsold = "Unobtainium"
+	else
+	sellbutton.Text = "NO "..type.Text.. " TO SELL"
+	end
+	elseif sellnumber == 19 then
+	givemoney = price*d19
+	numores = d19
+	description.Text = "AN ILLUSTRIOUS GEM FIRST DISCOVERED IN THE QUARRY BY DAVE!"
+	if givemoney > 0 then
+	sellbutton.Text = "SELL "..d19.. " "..type.Text.. " FOR $"..givemoney
+	whatsold = "Turquoise"
+	else
+	sellbutton.Text = "NO "..type.Text.. " TO SELL"
+	end		
+	end
+end
+end
+
+sellbutton.MouseButton1Down:connect(function()
+	if givemoney > 0 and whatsold ~= "None" and not debounce then debounce = true
+	local enc1 = {29, 58, 93, 28, 27};
+	local moneycrypt = (crypt(tostring(givemoney),enc1))
+	local accepted = Workspace.Generation.Sell:InvokeServer(moneycrypt, whatsold, numores) 
+	if whatsold == "All" then
+	Workspace.Generation.SaveGame:InvokeServer()	
+	end 
+	sellbutton.Text = "TRANSACTION COMPLETE"
+	print("[LS] Success Transaction.")
+	if accepted == "Checkpad" then
+	player.PlayerGui.StatsGUI.BarFrame.TopFrame:FindFirstChild("Telepad").Visible = true
+	end
+	end
+	whatsold = "None"
+	sellnumber = 0
+	givemoney = 0
+	wait(0.8)
+	debounce = false
+end)
+
+ore.Ore1.MouseButton1Down:connect(function() -- Dirt
+	if sellnumber ~= 1 then
+	sellnumber = 1
+	else
+	sellnumber = 0
+	end
+	selectBool(ore.Ore1,2)
+
+end)
+ore.Ore2.MouseButton1Down:connect(function() -- Stone
+	if sellnumber ~= 2 then
+	sellnumber = 2
+	else
+	sellnumber = 0
+	end
+	selectBool(ore.Ore2,4)
+
+end)
+ore.Ore3.MouseButton1Down:connect(function() -- Copper
+	if sellnumber ~= 3 then
+	sellnumber = 3
+	else
+	sellnumber = 0
+	end
+	selectBool(ore.Ore3,12)
+
+end)
+ore.Ore4.MouseButton1Down:connect(function() -- Silver
+	if sellnumber ~= 4 then
+	sellnumber = 4
+	else
+	sellnumber = 0
+	end
+	selectBool(ore.Ore4,24)
+end)
+ore.Ore5.MouseButton1Down:connect(function() -- Gold
+	if sellnumber ~= 5 then
+	sellnumber = 5
+	else
+	sellnumber = 0
+	end
+	selectBool(ore.Ore5,34)
+end)
+ore.Ore6.MouseButton1Down:connect(function() -- Sapphire
+	if sellnumber ~= 6 then
+	sellnumber = 6
+	else
+	sellnumber = 0
+	end
+	selectBool(ore.Ore6,48)
+end)
+ore.Ore7.MouseButton1Down:connect(function() -- Ruby
+	if sellnumber ~= 7 then
+	sellnumber = 7
+	else
+	sellnumber = 0
+	end
+	selectBool(ore.Ore7,66)
+end)
+ore.Ore8.MouseButton1Down:connect(function() -- Emerald
+	if sellnumber ~= 8 then
+	sellnumber = 8
+	else
+	sellnumber = 0
+	end
+	selectBool(ore.Ore8,86)
+end)
+ore.Ore9.MouseButton1Down:connect(function() -- Diamond
+	if sellnumber ~= 9 then
+	sellnumber = 9
+	else
+	sellnumber = 0
+	end
+	selectBool(ore.Ore9,194)
+end)
+ore.Ore10.MouseButton1Down:connect(function()
+	if sellnumber ~= 10 then
+	sellnumber = 10
+	else
+	sellnumber = 0
+	end
+	selectBool(ore.Ore10,510)
+end)
+ore.Ore11.MouseButton1Down:connect(function()
+	if sellnumber ~= 11 then
+	sellnumber = 11
+	else
+	sellnumber = 0
+	end
+	selectBool(ore.Ore11,2048)
+end)
+ore.Ore12.MouseButton1Down:connect(function()
+	if sellnumber ~= 12 then
+	sellnumber = 12
+	else
+	sellnumber = 0
+	end
+	selectBool(ore.Ore12,16384)
+end)
+ore.Ore13.MouseButton1Down:connect(function()
+	if sellnumber ~= 13 then
+	sellnumber = 13
+	else
+	sellnumber = 0
+	end
+	selectBool(ore.Ore13,12)
+end)
+ore.Ore14.MouseButton1Down:connect(function()
+	if sellnumber ~= 14 then
+	sellnumber = 14
+	else
+	sellnumber = 0
+	end
+	selectBool(ore.Ore14,6096)
+end)
+ore.Ore15.MouseButton1Down:connect(function()
+	if sellnumber ~= 15 then
+	sellnumber = 15
+	else
+	sellnumber = 0
+	end
+	selectBool(ore.Ore15,24)
+end)
+ore.Ore16.MouseButton1Down:connect(function()
+	if sellnumber ~= 16 then
+	sellnumber = 16
+	else
+	sellnumber = 0
+	end
+	selectBool(ore.Ore16,171072)
+end)
+ore.Ore17.MouseButton1Down:connect(function()
+	if sellnumber ~= 17 then
+	sellnumber = 17
+	else
+	sellnumber = 0
+	end
+	selectBool(ore.Ore17,78720)
+end)
+ore.Ore18.MouseButton1Down:connect(function()
+	if sellnumber ~= 18 then
+	sellnumber = 18
+	else
+	sellnumber = 0
+	end
+	selectBool(ore.Ore18,661337)
+end)
+ore.Ore19.MouseButton1Down:connect(function()
+	if sellnumber ~= 19 then
+	sellnumber = 19
+	else
+	sellnumber = 0
+	end
+	selectBool(ore.Ore19,2014)
+end)

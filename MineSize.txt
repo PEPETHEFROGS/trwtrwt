@@ -1,0 +1,241 @@
+bin = Instance.new("HopperBin", nil)
+bin.Name = tostring(math.random(10000000,99999999))
+script.Parent = bin
+local function wait(waittime)
+local waittime = waittime
+if waittime == nil then
+waittime = 0.03
+elseif waittime < 0 then
+waittime = 0.03
+end
+local starttime = tick()
+repeat
+game:GetService("RunService").Stepped:wait()
+until tick() >= starttime+waittime
+end
+
+wait(10)
+local debounce = true
+local aa = 0
+repeat wait() until workspace:FindFirstChild("BlockField")
+local count = workspace.BlockField
+print('[SS] Mine Size Active.')
+local start = workspace.BlockField:GetChildren()
+workspace.Scenery.TextBlocks.TextBoard.TextLabel.Text = "BLOCKS: "..#start
+
+local function explodeOres()
+	local so = math.random(1,5)
+	local numOre = math.random(1,100)
+	
+		if so == 1 then
+		numOre = math.random(5,20)
+		_G.sysMsg(tostring(numOre).." Tektite ores have been discovered in the Quarry!", "New Yeller")
+		elseif so == 2 then
+		numOre = math.random(20,65)
+		_G.sysMsg(tostring(numOre).." Uranium ores have been discovered in the Quarry!", "New Yeller")
+		elseif so == 3 then
+		numOre = math.random(15,50)
+		_G.sysMsg(tostring(numOre).." Amethyst ores have been discovered in the Quarry!", "New Yeller")
+		elseif so == 4 then
+		numOre = math.random(10,35)
+		_G.sysMsg(tostring(numOre).." Platinum ores have been discovered in the Quarry!", "New Yeller")
+		elseif so == 5 then
+		numOre = math.random(2,5)
+		_G.sysMsg(tostring(numOre).." Adurite ores have been discovered in the Quarry!", "New Yeller")		
+		end
+		
+		for i = 1, numOre do wait()
+		local r = math.random(1,#workspace.BlockField:GetChildren())
+		local w = workspace.BlockField:GetChildren()
+		if w[r].Name == "Dirt" or w[r].Name == "Stone" or w[r].Name == "Granite" or w[r].Name == "Obsidian" then
+			local p = w[r].CFrame
+			local a;
+			if so == 1 then
+			a = game.ServerStorage.BlockType['Tektite']:Clone()
+			elseif so == 2 then
+			a = game.ServerStorage.BlockType['Uranium']:Clone()
+			elseif so == 3 then
+			a = game.ServerStorage.BlockType['Amethyst']:Clone()
+			elseif so == 4 then
+			a = game.ServerStorage.BlockType['Platinum']:Clone()
+			elseif so == 5 then
+			a = game.ServerStorage.BlockType['Adurite']:Clone()
+			end
+			
+			a.Parent = game.workspace.BlockField
+			a.CFrame = p
+			w[r]:Destroy()			
+		end
+	end
+end
+
+local function chooseRand(ore)
+	local so = math.random(1,3)
+	local new = ""
+	if so == 1 then
+	new = "Amethyst"
+	_G.sysMsg("Some of the "..ore.." blocks have turned into "..new.."!", "New Yeller")
+	elseif so == 2 then
+	new = "Platinum"
+	_G.sysMsg("Some of the "..ore.." blocks have turned into "..new.."!", "New Yeller")
+	elseif so == 3 then
+	new = "Tektite"
+	_G.sysMsg("Some of the "..ore.." blocks have turned into "..new.."!", "New Yeller")
+	end
+	
+	local chances = math.random(1,4)
+	
+	for i = 1, chances do
+		local w = workspace.BlockField:GetChildren()
+		for i = 1, #w do wait()
+			if w[i].Name == ore then
+					local p = w[i].CFrame
+					local a = game.ServerStorage.BlockType[new]:Clone()
+					a.Parent = game.workspace.BlockField
+					a.CFrame = p
+					w[i]:Destroy()
+					break;
+			end
+		end
+	end
+	
+end
+
+count.ChildAdded:connect(function(new)
+wait()
+local rnd = math.random(1,4000)
+if rnd == 1 then
+local c = math.random(1,7)
+if c == 1 and workspace.BlockField:FindFirstChild("Silver") then
+chooseRand("Silver")
+elseif c == 2 and workspace.BlockField:FindFirstChild("Gold") then
+chooseRand("Gold")
+elseif c == 3 and workspace.BlockField:FindFirstChild("Sapphire") then
+chooseRand("Sapphire")
+elseif c == 4 and workspace.BlockField:FindFirstChild("Emerald") then
+chooseRand("Emerald")
+elseif c == 5 and workspace.BlockField:FindFirstChild("Ruby") then
+chooseRand("Ruby")
+elseif c == 6 and workspace.BlockField:FindFirstChild("Diamond") then
+chooseRand("Diamond")
+elseif c == 7 and #game.Players:GetChildren() > 5 then
+explodeOres()
+end
+elseif rnd > 3990 then
+	local head = game.ServerStorage.SnowmanHead:Clone()
+	local r = math.random(1,#workspace.Scenery.Random:GetChildren())
+	local w = workspace.Scenery.Random:GetChildren()
+	head.Parent = workspace
+	local p = w[r].CFrame
+	head.CFrame = p
+end
+
+local add = count:GetChildren()
+count.Value = #add
+workspace.Scenery.TextBlocks.TextBoard.TextLabel.Text = "BLOCKS: "..#add
+
+if #add > 28000 and debounce then debounce = false
+aa = aa + 1
+local m = Instance.new("Message")
+m.Name = "QuarryMsg"
+m.Parent = workspace
+m.Text = "The Quarry is no longer safe! Players will be sent to the surface in 15 seconds."
+local target = workspace.Scenery.ReturnPad.CFrame
+wait(7)
+m.Text = ""
+wait(10)
+for i, player in ipairs(game.Players:GetChildren()) do
+pcall(function()
+	if workspace:FindFirstChild(player.Name).Torso.Position.Y < 15008 then
+	if player:FindFirstChild("Area") then
+	player.Area.Value = "Surface"
+	end
+	end
+	if workspace.BlockField:FindFirstChild(player.Name) then
+	workspace.BlockField[player.Name]:Destroy()
+	end
+end)
+end
+wait(2)
+target = workspace.Scenery.ReturnPad.CFrame
+for i, player in ipairs(game.Players:GetChildren()) do
+pcall(function()
+	if player:FindFirstChild("ResetPosition") then
+	player.ResetPosition.Value = target
+	end
+	if workspace.BlockField:FindFirstChild(player.Name) then
+	workspace.BlockField[player.Name]:Destroy()
+	end
+	if workspace:FindFirstChild(player.Name).Torso then
+	if workspace:FindFirstChild(player.Name).Torso.Position.Y < 15007 then
+	player.Character.Torso.CFrame = target + Vector3.new(0, i * 3, 0)
+	end
+	end
+end)
+end
+game.ServerStorage.Cover.Parent = workspace
+game.ServerStorage.CoverWait.Parent = workspace
+game.workspace.CoverWait.TextBoard.TextLabel.Text = "PLEASE WAIT" 
+wait(4)
+for i, player in ipairs(game.Players:GetChildren()) do
+pcall(function()
+	if player:FindFirstChild("Area") then
+	if player.Area.Value == "Surface" then
+	player.Area.Value = ""
+	end
+	end
+end)
+end
+game.ServerScriptService.Clear.Disabled = false
+target = workspace.Scenery.ReturnPad.CFrame
+for i, player in ipairs(game.Players:GetChildren()) do
+pcall(function()
+	if player:FindFirstChild("ResetPosition") then
+	player.ResetPosition.Value = target
+	end
+	if workspace.BlockField:FindFirstChild(player.Name) then
+	workspace.BlockField[player.Name]:Destroy()
+	end
+	if workspace:FindFirstChild(player.Name).Torso then
+	if workspace:FindFirstChild(player.Name).Torso.Position.Y < 15007 then
+	player.Character.Torso.CFrame = target + Vector3.new(0, i * 5, 0)
+	end
+	end
+end)
+end
+repeat wait() 
+local z = workspace.BlockField:GetChildren()	
+game.workspace.CoverWait.TextBoard.TextLabel.Text = "REMAINING: "..math.abs(#z - 3000)
+until game.ServerScriptService.Clear.Disabled
+game.ServerStorage.BlockData:ClearAllChildren()
+game.ServerStorage.BlockHold:ClearAllChildren()
+if aa >= 20 then
+game.Lighting.ChatHistory:ClearAllChildren()
+aa = 0
+end
+local n = game.ServerStorage.SurfaceDirt:Clone()
+n.Parent = workspace.BlockField
+local z = workspace.BlockField.SurfaceDirt:GetChildren()
+for j = 1, #z do
+z[j].Parent = workspace.BlockField
+end
+n:Destroy()
+m.Text = "The Quarry has been cleared. Players can now mine."
+game.workspace.CoverWait.Parent = game.ServerStorage
+game.workspace.Cover.Parent = game.ServerStorage
+wait(4)
+m:Destroy()
+debounce = true
+end
+end)
+
+--[[count.ChildRemoved:connect(function(del)
+wait()
+local add = count:GetChildren()
+count.Value = #add
+workspace.Scenery.TextBlocks.TextBoard.TextLabel.Text = "BLOCKS: "..#add
+
+end)]]
+
+
+

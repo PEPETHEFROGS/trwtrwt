@@ -1,0 +1,249 @@
+-- Dummiez's Console
+wait(1)
+local main = script.Parent
+local gui = main.Parent
+local type = "TopMoney2"
+local ore = "Dirt"
+-- Get player name.
+local Workspace = game:GetService("Workspace")
+if workspace.Generation.ApproveUser:InvokeServer(1) == false then
+print("[LS] Console Inactive: "..game.Players.LocalPlayer.userId.. " | " ..game.Players.LocalPlayer.Name)
+script.Parent.Parent:Destroy()
+else
+
+function getName(name) --List players
+for _, player in ipairs(game.Players:GetPlayers()) do
+if player.Name:lower():find(name:lower()) then
+return player
+end
+end
+end
+
+-- Conversion function.
+local function convert( chars, dist, inv )
+return string.char((string.byte(chars) - 32 + (inv and -dist or dist)) % 95 + 32)
+end
+
+-- Encrypt all text.
+local function crypt(str,k,inv)
+local enc= "";
+for i=1,#str do
+if(#str-k[5] >= i or not inv)then
+for inc=0,3 do
+if(i%4 == inc)then
+enc = enc .. convert(string.sub(str,i,i),k[inc+1],inv);
+break;
+end
+end
+end
+end
+if(not inv)then
+for i=1,k[5] do
+enc = enc .. string.char(math.random(32,126));
+end
+
+end
+return enc;
+end
+
+main.BtnTop.MouseButton1Down:connect(function()
+local pr = script.Parent
+local str = pr.IntVal.Text 
+local str2 = pr.StrVal.Text
+
+if str2 ~= "" and str ~= "" then
+local pts = Workspace.Generation.EditValue:InvokeServer(type, str, str2)
+	
+main.TextFrame.TextOutput.Text = "[OUTPUT]: "..str2.. "'s "..type.." was changed.\
+"..main.TextFrame.TextOutput.Text
+end
+
+end)
+
+-- Close the console.
+main.BtnExit.MouseButton1Down:connect(function()
+--[[main.TextFrame.TextOutput.Text = "[OUTPUT]: Terminating console at "..tostring(time()).."\
+"..main.TextFrame.TextOutput.Text
+wait(0.5)
+gui.Tray.Visible = false]]
+local pr = script.Parent
+local str2 = pr.StrVal.Text
+if str2 ~= "" then
+local pts = Workspace.Generation.GetScore:InvokeServer(type, str2)
+main.TextFrame.TextOutput.Text = "[OUTPUT]: "..str2.. "'s "..type.." is "..pts..".\
+"..main.TextFrame.TextOutput.Text
+end
+end)
+
+-- Clear the event log.
+main.BtnClear.MouseButton1Down:connect(function()
+main.TextFrame.TextOutput.Text = ""
+main.TextFrame.TextOutput.Text = "[OUTPUT]: Console output cleared.\
+"..main.TextFrame.TextOutput.Text
+end)
+
+-- Reset a player's vest value.
+main.BtnReset.MouseButton1Down:connect(function()
+local pr = script.Parent
+local str2 = pr.StrVal.Text
+local enc1 = {29, 58, 93, 28, 27};
+
+gName = getName(str2)
+
+if game.Players:findFirstChild(tostring(gName)) ~= nil and str2 ~= "" then
+local find = game.Players:findFirstChild(tostring(gName)).cryptstats:FindFirstChild("En_"..ore).Value;
+
+--ad = (crypt(str,enc1,true))
+--game.Players:findFirstChild(tostring(gName)).leaderstats.Best.Value = ad
+local decrypt = tonumber((crypt((find),enc1,true))) or 0
+
+main.TextFrame.TextOutput.Text = "[OUTPUT]: Retrieved "..tostring(gName).. "'s "..ore.." value of: ("..tostring(decrypt)..") "..find.."\
+"..main.TextFrame.TextOutput.Text
+else
+	
+main.TextFrame.TextOutput.Text = "[OUTPUT]: "..tostring(gName).. " value was returned.\
+"..main.TextFrame.TextOutput.Text
+end
+end)
+
+-- Set value for a player.
+main.BtnEncrypt.MouseButton1Down:connect(function()
+local pr = script.Parent
+local enc1 = {29, 58, 93, 28, 27};
+local str = pr.IntVal.Text 
+local str2 = pr.StrVal.Text
+
+gName = getName(str2)
+
+if game.Players:findFirstChild(tostring(gName)) ~= nil and str2 ~= "" then
+local crypted = crypt(str,enc1)
+
+Workspace.Generation.OreValue:InvokeServer(crypted,ore,gName)
+
+main.TextFrame.TextOutput.Text = "[OUTPUT]: Sent "..ore.." data to "..tostring(gName).. ": "..crypted.."\
+"..main.TextFrame.TextOutput.Text
+else
+main.TextFrame.TextOutput.Text = "[OUTPUT]: "..tostring(gName).. " value was returned.\
+"..main.TextFrame.TextOutput.Text
+end
+end)
+
+main.BtnOre.MouseButton1Down:connect(function()
+local pr = script.Parent
+local str = pr.BtnOre
+if str.Text == "ORE: DIRT" then
+str.Text = "ORE: STONE"
+ore = "Stone"
+elseif str.Text == "ORE: STONE" then
+str.Text = "ORE: COPPER"
+ore = "Copper"
+elseif str.Text == "ORE: COPPER" then
+str.Text = "ORE: GRANITE"
+ore = "Coal"
+elseif str.Text == "ORE: GRANITE" then
+str.Text = "ORE: SILVER"
+ore = "Silver"
+elseif str.Text == "ORE: SILVER" then
+str.Text = "ORE: OBSIDIAN"
+ore = "Tin"
+elseif str.Text == "ORE: OBSIDIAN" then
+str.Text = "ORE: GOLD"
+ore = "Gold"
+elseif str.Text == "ORE: GOLD" then
+str.Text = "ORE: SAPPHIRE"
+ore = "Sapphire"
+elseif str.Text == "ORE: SAPPHIRE" then
+str.Text = "ORE: RUBY"
+ore = "Ruby"
+elseif str.Text == "ORE: RUBY" then
+str.Text = "ORE: EMERALD"
+ore = "Emerald"
+elseif str.Text == "ORE: EMERALD" then
+str.Text = "ORE: DIAMOND"
+ore = "Diamond"
+elseif str.Text == "ORE: DIAMOND" then
+str.Text = "ORE: URANIUM"
+ore = "Uranium"
+elseif str.Text == "ORE: URANIUM" then
+str.Text = "ORE: AMETHYST"
+ore = "Amethyst"
+elseif str.Text == "ORE: AMETHYST" then
+str.Text = "ORE: PLATINUM"
+ore = "Platinum"
+elseif str.Text == "ORE: PLATINUM" then
+str.Text = "ORE: TEKTITE"
+ore = "Oil"
+elseif str.Text == "ORE: TEKTITE" then
+str.Text = "ORE: ADURITE"
+ore = "Adurite"
+elseif str.Text == "ORE: ADURITE" then
+str.Text = "STAT: MONEY"
+ore = "Money"
+elseif str.Text == "STAT: MONEY" then
+str.Text = "STAT: MINED"
+ore = "Mined"
+elseif str.Text == "STAT: MINED" then
+str.Text = "STAT: DIST."
+ore = "PickDis"
+elseif str.Text == "STAT: DIST." then
+str.Text = "STAT: COOL."
+ore = "PickCool"
+elseif str.Text == "STAT: COOL." then
+str.Text = "STAT: DIRT"
+ore = "PickDirt"
+elseif str.Text == "STAT: DIRT" then
+str.Text = "STAT: STONE"
+ore = "PickStone"
+elseif str.Text == "STAT: STONE" then
+str.Text = "STAT: ORE"
+ore = "PickOre"
+elseif str.Text == "STAT: ORE" then
+str.Text = "STAT: GRANITE"
+ore = "Energy"
+elseif str.Text == "STAT: GRANITE" then
+str.Text = "STAT: OBSIDIAN"
+ore = "BucketOil"
+elseif str.Text == "STAT: OBSIDIAN" then
+str.Text = "STAT: SPEED"
+ore = "Sprint"
+elseif str.Text == "STAT: SPEED" then
+str.Text = "STAT: INV."
+ore = "Inventory"
+elseif str.Text == "STAT: INV." then
+str.Text = "STAT: TELE"
+ore = "Teleport"
+elseif str.Text == "STAT: TELE" then
+str.Text = "STAT: LIGHT"
+ore = "Light"
+elseif str.Text == "STAT: LIGHT" then
+str.Text = "ORE: DIRT"
+ore = "Dirt"
+end
+end)
+
+main.BtnScore.MouseButton1Down:connect(function()
+--[[local pts = Workspace.Generation.GetPoints:InvokeServer()
+main.TextFrame.TextOutput.Text = "[OUTPUT]: There are "..tostring(pts).." Player Point(s).\
+"..main.TextFrame.TextOutput.Text]]
+local p = Workspace.Scenery.BaseHax.SurfaceGui
+for i = 1, 20 do
+main.TextFrame.TextOutput.Text = "Player: "..p["Name"..i].Text.." Attempts: "..p["Score"..i].Text.."\
+"..main.TextFrame.TextOutput.Text
+end
+end)
+
+main.BtnMode.MouseButton1Down:connect(function()
+local pr = script.Parent
+local str = pr.BtnMode
+if str.Text == "GLOBAL MONEY" then
+str.Text = "GLOBAL MINED"
+type = "TopMined2"
+elseif str.Text == "GLOBAL MINED" then
+str.Text = "GLOBAL TIME"
+type = "TopTime"
+elseif str.Text == "GLOBAL TIME" then
+str.Text = "GLOBAL MONEY"
+type = "TopMoney2"
+end
+end)
+end
